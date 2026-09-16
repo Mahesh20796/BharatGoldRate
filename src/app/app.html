@@ -1,0 +1,18 @@
+<div class="app-layout">
+  <!-- Desktop / Tablet Navigation Sidebar -->
+  <app-sidebar></app-sidebar>
+
+  <!-- Main Application Body -->
+  <div class="main-wrapper">
+    <!-- Header with Live/Manual status, Theme toggle and clock -->
+    <app-header></app-header>
+
+    <!-- Page Content Container -->
+    <main class="main-content">
+      <router-outlet></router-outlet>
+    </main>
+
+    <!-- Mobile Bottom Navigation -->
+    <app-bottom-nav></app-bottom-nav>
+  </div>
+</div>

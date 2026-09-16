@@ -1,0 +1,112 @@
+[
+  {
+    "year": 2017,
+    "ratePerKg": 37825,
+    "ratePerGram": 37.82,
+    "ratePer10g": 378.25,
+    "ratePer100g": 3782.5,
+    "changePercent": 2.1,
+    "highPerKg": 44100,
+    "lowPerKg": 35400,
+    "note": "Industrial demand rebound in automotive & solar"
+  },
+  {
+    "year": 2018,
+    "ratePerKg": 38500,
+    "ratePerGram": 38.50,
+    "ratePer10g": 385.00,
+    "ratePer100g": 3850.0,
+    "changePercent": 1.8,
+    "highPerKg": 41800,
+    "lowPerKg": 36200,
+    "note": "Rangebound consolidation"
+  },
+  {
+    "year": 2019,
+    "ratePerKg": 40400,
+    "ratePerGram": 40.40,
+    "ratePer10g": 404.00,
+    "ratePer100g": 4040.0,
+    "changePercent": 4.9,
+    "highPerKg": 49000,
+    "lowPerKg": 37100,
+    "note": "Monetary policy easing and global manufacturing uptake"
+  },
+  {
+    "year": 2020,
+    "ratePerKg": 63435,
+    "ratePerGram": 63.44,
+    "ratePer10g": 634.35,
+    "ratePer100g": 6343.5,
+    "changePercent": 57.0,
+    "highPerKg": 77949,
+    "lowPerKg": 33580,
+    "note": "Historic surge amid investor rush into physical assets"
+  },
+  {
+    "year": 2021,
+    "ratePerKg": 62500,
+    "ratePerGram": 62.50,
+    "ratePer10g": 625.00,
+    "ratePer100g": 6250.0,
+    "changePercent": -1.5,
+    "highPerKg": 73800,
+    "lowPerKg": 58300,
+    "note": "Consolidation after pandemic highs"
+  },
+  {
+    "year": 2022,
+    "ratePerKg": 69400,
+    "ratePerGram": 69.40,
+    "ratePer10g": 694.00,
+    "ratePer100g": 6940.0,
+    "changePercent": 11.0,
+    "highPerKg": 72500,
+    "lowPerKg": 52000,
+    "note": "Green energy transition and solar photovoltaic demand"
+  },
+  {
+    "year": 2023,
+    "ratePerKg": 78600,
+    "ratePerGram": 78.60,
+    "ratePer10g": 786.00,
+    "ratePer100g": 7860.0,
+    "changePercent": 13.3,
+    "highPerKg": 82000,
+    "lowPerKg": 66500,
+    "note": "Electronics & EV battery industry boom"
+  },
+  {
+    "year": 2024,
+    "ratePerKg": 96000,
+    "ratePerGram": 96.00,
+    "ratePer10g": 960.00,
+    "ratePer100g": 9600.0,
+    "changePercent": 22.1,
+    "highPerKg": 101500,
+    "lowPerKg": 71000,
+    "note": "Structural physical silver deficit & AI data-center demand"
+  },
+  {
+    "year": 2025,
+    "ratePerKg": 145000,
+    "ratePerGram": 145.00,
+    "ratePer10g": 1450.00,
+    "ratePer100g": 14500.0,
+    "changePercent": 51.0,
+    "highPerKg": 158000,
+    "lowPerKg": 94000,
+    "note": "Massive structural supply crunch and global green tech surge"
+  },
+  {
+    "year": 2026,
+    "ratePerKg": 230000,
+    "ratePerGram": 230.00,
+    "ratePer10g": 2300.00,
+    "ratePer100g": 23000.0,
+    "changePercent": 58.6,
+    "highPerKg": 242000,
+    "lowPerKg": 142000,
+    "note": "Current benchmark market levels"
+  }
+]
