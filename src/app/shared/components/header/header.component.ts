@@ -16,7 +16,7 @@ import { RateBadgeComponent } from '../rate-badge/rate-badge.component';
         <!-- Brand & Title -->
         <div class="brand-section">
           <div class="logo-mark">
-            <span class="material-symbols-outlined logo-icon">toll</span>
+            <img src="favicon.svg" alt="Bharat Bullion" class="logo-coin-img" />
           </div>
           <div class="brand-text">
             <h1 class="brand-title">Bharat Bullion</h1>
@@ -87,16 +87,16 @@ import { RateBadgeComponent } from '../rate-badge/rate-badge.component';
     .logo-mark {
       width: 36px;
       height: 36px;
-      border-radius: var(--radius-xs);
-      background: var(--bg-surface-elevated);
-      border: 1px solid var(--border-gold);
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
 
-      .logo-icon {
-        color: var(--text-gold);
-        font-size: 22px;
+      .logo-coin-img {
+        width: 34px;
+        height: 34px;
+        object-fit: contain;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
       }
     }
 
