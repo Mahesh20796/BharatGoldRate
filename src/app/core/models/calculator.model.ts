@@ -2,6 +2,7 @@ import { GoldPurity } from './rate.model';
 
 export type MetalType = 'gold' | 'silver';
 export type LabourChargeType = 'percentage' | 'perGram' | 'none';
+export type GstChargeType = 'percentage' | 'perGram' | 'none';
 
 export type GoldProductCategory = 'jewellery' | 'bullion';
 
@@ -51,7 +52,9 @@ export interface GoldCalculationInput {
   ratePerGram: number;
   labourType: LabourChargeType;
   labourValue: number;
-  gstPercentage: number;
+  gstType?: GstChargeType;
+  gstValue?: number;
+  gstPercentage?: number;
 }
 
 export interface SilverCalculationInput {
@@ -60,7 +63,9 @@ export interface SilverCalculationInput {
   ratePerGram: number;
   labourType: LabourChargeType;
   labourValue: number;
-  gstPercentage: number;
+  gstType?: GstChargeType;
+  gstValue?: number;
+  gstPercentage?: number;
 }
 
 export interface CalculationResult {
@@ -76,6 +81,8 @@ export interface CalculationResult {
   labourInput: number;
   makingCharge: number;
   taxableValue: number;
+  gstType: GstChargeType;
+  gstInput: number;
   gstPercentage: number;
   gstAmount: number;
   finalPrice: number;

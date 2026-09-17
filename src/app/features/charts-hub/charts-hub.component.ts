@@ -213,19 +213,17 @@ Chart.register(...registerables);
         }
 
         &.gold-tab.active {
-          background: var(--card-gradient-gold);
-          border-color: var(--border-highlight);
-          color: var(--text-primary);
-          box-shadow: var(--gold-glow);
-          span.material-symbols-outlined { color: var(--gold-400); }
+          background: var(--bg-surface-elevated);
+          border-color: var(--border-gold);
+          color: var(--text-gold);
+          span.material-symbols-outlined { color: var(--text-gold); }
         }
 
         &.silver-tab.active {
-          background: var(--card-gradient-silver);
-          border-color: rgba(148, 163, 184, 0.4);
-          color: var(--text-primary);
-          box-shadow: var(--silver-glow);
-          span.material-symbols-outlined { color: var(--silver-300); }
+          background: var(--bg-surface-elevated);
+          border-color: var(--border-silver);
+          color: var(--text-silver);
+          span.material-symbols-outlined { color: var(--text-silver); }
         }
       }
     }

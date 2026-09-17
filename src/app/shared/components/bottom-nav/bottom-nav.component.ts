@@ -108,27 +108,26 @@ import { RouterModule } from '@angular/router';
 
     .nav-item-special {
       .calculator-fab {
-        width: 44px;
-        height: 44px;
+        width: 42px;
+        height: 42px;
         border-radius: 50%;
-        background: var(--gold-gradient);
-        color: #1A1200;
+        background: var(--gold-accent);
+        color: #0E121B;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 14px rgba(212, 175, 55, 0.4);
-        margin-top: -16px;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: var(--shadow-md);
+        margin-top: -14px;
+        transition: transform 0.15s ease;
 
         span {
-          font-size: 24px;
+          font-size: 22px;
         }
       }
 
       &:hover .calculator-fab,
       &.active .calculator-fab {
-        transform: scale(1.08) translateY(-2px);
-        box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6);
+        transform: translateY(-2px);
       }
     }
   `]

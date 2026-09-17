@@ -34,7 +34,7 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
         <div class="app-card gold-card section-card">
           <div class="section-card-header">
             <div class="header-left">
-              <span class="material-symbols-outlined icon">diamond</span>
+              <span class="material-symbols-outlined icon">toll</span>
               <div>
                 <h3>Gold Benchmark Rates</h3>
                 <span class="sub">Rates entered per 10 Grams (1 Tola)</span>

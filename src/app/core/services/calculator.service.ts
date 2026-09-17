@@ -3,7 +3,8 @@ import {
   CalculationResult,
   GoldCalculationInput,
   SilverCalculationInput,
-  LabourChargeType
+  LabourChargeType,
+  GstChargeType
 } from '../models/calculator.model';
 
 @Injectable({
@@ -50,6 +51,27 @@ export class CalculatorService {
     return this.round((taxableValue * gstPercentage) / 100);
   }
 
+  calculateGSTAmount(
+    taxableValue: number,
+    weightGrams: number,
+    gstType: GstChargeType,
+    gstValue: number
+  ): { gstAmount: number; gstPercentage: number } {
+    if (gstType === 'none' || gstValue <= 0) {
+      return { gstAmount: 0, gstPercentage: 0 };
+    }
+    if (gstType === 'percentage') {
+      const gstAmount = this.round((taxableValue * gstValue) / 100);
+      return { gstAmount, gstPercentage: gstValue };
+    }
+    if (gstType === 'perGram') {
+      const gstAmount = this.round(weightGrams * gstValue);
+      const effectivePercentage = taxableValue > 0 ? this.round((gstAmount / taxableValue) * 100) : 0;
+      return { gstAmount, gstPercentage: effectivePercentage };
+    }
+    return { gstAmount: 0, gstPercentage: 0 };
+  }
+
   calculateFinalPrice(taxableValue: number, gstAmount: number): number {
     return this.round(taxableValue + gstAmount);
   }
@@ -89,7 +111,11 @@ export class CalculatorService {
       input.labourValue
     );
     const taxableValue = this.calculateTaxableValue(metalValue, makingCharge);
-    const gstAmount = this.calculateGST(taxableValue, input.gstPercentage);
+    
+    const gstType: GstChargeType = input.gstType || (input.gstPercentage === 0 ? 'none' : 'percentage');
+    const gstInputVal = input.gstValue !== undefined ? input.gstValue : (input.gstPercentage !== undefined ? input.gstPercentage : 3);
+    const { gstAmount, gstPercentage } = this.calculateGSTAmount(taxableValue, input.weightGrams, gstType, gstInputVal);
+
     const finalPrice = this.calculateFinalPrice(taxableValue, gstAmount);
 
     const now = new Date();
@@ -115,7 +141,9 @@ export class CalculatorService {
       labourInput: input.labourValue,
       makingCharge,
       taxableValue,
-      gstPercentage: input.gstPercentage,
+      gstType,
+      gstInput: gstInputVal,
+      gstPercentage,
       gstAmount,
       finalPrice,
       formattedDate
@@ -131,7 +159,11 @@ export class CalculatorService {
       input.labourValue
     );
     const taxableValue = this.calculateTaxableValue(metalValue, makingCharge);
-    const gstAmount = this.calculateSilverGST(taxableValue, input.gstPercentage);
+    
+    const gstType: GstChargeType = input.gstType || (input.gstPercentage === 0 ? 'none' : 'percentage');
+    const gstInputVal = input.gstValue !== undefined ? input.gstValue : (input.gstPercentage !== undefined ? input.gstPercentage : 3);
+    const { gstAmount, gstPercentage } = this.calculateGSTAmount(taxableValue, input.weightGrams, gstType, gstInputVal);
+
     const finalPrice = this.calculateSilverFinalPrice(taxableValue, gstAmount);
 
     const now = new Date();
@@ -156,7 +188,9 @@ export class CalculatorService {
       labourInput: input.labourValue,
       makingCharge,
       taxableValue,
-      gstPercentage: input.gstPercentage,
+      gstType,
+      gstInput: gstInputVal,
+      gstPercentage,
       gstAmount,
       finalPrice,
       formattedDate

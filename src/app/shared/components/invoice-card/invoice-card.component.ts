@@ -4,7 +4,6 @@ import { CalculationResult } from '../../../core/models/calculator.model';
 import { InrCurrencyPipe } from '../../pipes/inr-currency.pipe';
 import { WeightFormatPipe } from '../../pipes/weight-format.pipe';
 import { HistoryService } from '../../../core/services/history.service';
-import confetti from 'canvas-confetti';
 
 @Component({
   selector: 'app-invoice-card',
@@ -13,98 +12,117 @@ import confetti from 'canvas-confetti';
   template: `
     @if (result(); as item) {
       <div class="invoice-card" [class.is-gold]="item.metal === 'gold'" [class.is-silver]="item.metal === 'silver'">
-        <!-- Receipt Top Jagged Design -->
-        <div class="receipt-header">
-          <div class="header-badge">
-            <span class="material-symbols-outlined">{{ item.metal === 'gold' ? 'diamond' : 'monetization_on' }}</span>
-            <span>PRICE SUMMARY INVOICE</span>
+        <!-- Formal Memo Header -->
+        <div class="memo-header">
+          <div class="memo-badge-row">
+            <span class="memo-badge">
+              <span class="material-symbols-outlined">{{ item.metal === 'gold' ? 'toll' : 'monetization_on' }}</span>
+              <span>PRICE ESTIMATION MEMO</span>
+            </span>
+            <span class="memo-hsn">HSN {{ getHsnCode(item) }}</span>
           </div>
           <h3 class="product-title">{{ item.productTitle }}</h3>
-          <div class="receipt-meta">
-            <span class="date">{{ item.formattedDate }}</span>
+          <div class="memo-meta">
+            <span class="meta-date">{{ item.formattedDate }}</span>
             <span class="dot">•</span>
-            <span class="id-tag">#{{ item.id.substring(item.id.length - 6).toUpperCase() }}</span>
+            <span class="memo-ref">REF #{{ item.id.substring(item.id.length - 6).toUpperCase() }}</span>
           </div>
         </div>
 
-        <!-- Receipt Body Rows -->
-        <div class="receipt-body">
-          <div class="invoice-row">
-            <span class="label">Metal & Purity</span>
-            <span class="value">
-              {{ item.metal === 'gold' ? 'Gold (' + item.purity + ')' : 'Pure Silver' }}
+        <!-- Memo Specification Rows -->
+        <div class="memo-body">
+          <div class="memo-row">
+            <span class="row-label">Metal & Purity</span>
+            <span class="row-val">
+              {{ item.metal === 'gold' ? 'Gold (' + item.purity + ')' : 'Pure Silver (999)' }}
             </span>
           </div>
 
-          <div class="invoice-row">
-            <span class="label">Net Weight</span>
-            <span class="value weight-val">{{ item.weightGrams | weightFormat }}</span>
+          <div class="memo-row">
+            <span class="row-label">Net Weight</span>
+            <span class="row-val weight-text">{{ item.weightGrams | weightFormat }}</span>
           </div>
 
-          <div class="invoice-row">
-            <span class="label">Base Rate / Gram</span>
-            <span class="value">{{ item.ratePerGram | inrCurrency }}</span>
+          <div class="memo-row">
+            <span class="row-label">Benchmark Rate</span>
+            <span class="row-val">{{ item.ratePerGram | inrCurrency }} / g</span>
           </div>
 
-          <div class="invoice-row highlight">
-            <span class="label">Metal Value</span>
-            <span class="value">{{ item.metalValue | inrCurrency }}</span>
+          <div class="memo-row highlight-sub">
+            <span class="row-label">Raw Metal Value</span>
+            <span class="row-val">{{ item.metalValue | inrCurrency }}</span>
           </div>
 
-          <div class="invoice-row">
-            <span class="label">
-              Making / Labour
+          <div class="memo-row">
+            <span class="row-label">
+              Making / Labour Charges
               @if (item.labourType === 'percentage') {
-                <small>({{ item.labourInput }}%)</small>
+                <span class="row-hint">({{ item.labourInput }}%)</span>
               } @else if (item.labourType === 'perGram') {
-                <small>(₹{{ item.labourInput }}/g)</small>
+                <span class="row-hint">(₹{{ item.labourInput }}/g)</span>
+              } @else {
+                <span class="row-hint">(None)</span>
               }
             </span>
-            <span class="value">{{ item.makingCharge | inrCurrency }}</span>
+            <span class="row-val">{{ item.makingCharge | inrCurrency }}</span>
           </div>
 
-          <div class="invoice-row highlight">
-            <span class="label">Taxable Value</span>
-            <span class="value">{{ item.taxableValue | inrCurrency }}</span>
+          <div class="memo-row highlight-sub">
+            <span class="row-label">Taxable Value</span>
+            <span class="row-val">{{ item.taxableValue | inrCurrency }}</span>
           </div>
 
-          <div class="invoice-row">
-            <span class="label">GST ({{ item.gstPercentage }}%)</span>
-            <span class="value">{{ item.gstAmount | inrCurrency }}</span>
+          <!-- GST Breakdown row -->
+          <div class="memo-row gst-row">
+            @if (item.gstPercentage === 0) {
+              <span class="row-label">GST (0% / Exempt)</span>
+              <span class="row-val zero-gst">₹0.00</span>
+            } @else if (item.gstPercentage === 3.0) {
+              <div class="gst-label-wrap">
+                <span class="row-label">GST 3.0%</span>
+                <span class="gst-split">CGST 1.5% + SGST 1.5%</span>
+              </div>
+              <span class="row-val">{{ item.gstAmount | inrCurrency }}</span>
+            } @else {
+              <span class="row-label">GST ({{ item.gstPercentage }}% Manual)</span>
+              <span class="row-val">{{ item.gstAmount | inrCurrency }}</span>
+            }
           </div>
 
-          <!-- Total Final Price -->
-          <div class="invoice-row total-row">
-            <div class="total-label-wrap">
-              <span class="label">FINAL PRICE</span>
-              <span class="inclusive-text">(Incl. Making & GST)</span>
+          <!-- Total Net Payable -->
+          <div class="total-payable-block">
+            <div class="payable-label-col">
+              <span class="payable-title">NET PAYABLE</span>
+              <span class="payable-sub">
+                {{ item.gstPercentage === 0 ? '(Without GST)' : '(Inclusive of GST & Making)' }}
+              </span>
             </div>
-            <span class="value total-val">{{ item.finalPrice | inrCurrency }}</span>
+            <div class="payable-amount">{{ item.finalPrice | inrCurrency }}</div>
           </div>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="receipt-actions">
+        <!-- Action Controls -->
+        <div class="memo-actions">
           @if (showSaveBtn()) {
-            <button class="btn-action btn-save" (click)="saveItem(item)" [disabled]="isSaved()">
+            <button class="btn-primary memo-save-btn" (click)="saveItem(item)" [disabled]="isSaved()">
               <span class="material-symbols-outlined">{{ isSaved() ? 'check_circle' : 'bookmark_add' }}</span>
-              <span>{{ isSaved() ? 'Saved to History' : 'Save Calculation' }}</span>
+              <span>{{ isSaved() ? 'Saved in History' : 'Save Calculation' }}</span>
             </button>
           }
 
-          <div class="action-grid">
-            <button class="btn-action btn-whatsapp" (click)="shareWhatsApp(item)" title="Share on WhatsApp">
+          <div class="action-btn-row">
+            <button class="btn-secondary share-btn" (click)="shareWhatsApp(item)" title="Share Estimate on WhatsApp">
               <span class="material-symbols-outlined">share</span>
               <span>WhatsApp</span>
             </button>
 
-            <button class="btn-action btn-copy" (click)="copyText(item)" title="Copy Invoice to Clipboard">
+            <button class="btn-secondary copy-btn" (click)="copyText(item)" title="Copy Invoice Quotation">
               <span class="material-symbols-outlined">{{ copySuccess() ? 'done_all' : 'content_copy' }}</span>
-              <span>{{ copySuccess() ? 'Copied!' : 'Copy' }}</span>
+              <span>{{ copySuccess() ? 'Copied' : 'Copy' }}</span>
             </button>
 
             @if (showDeleteBtn()) {
-              <button class="btn-action btn-delete" (click)="onDelete.emit(item.id)" title="Delete from History">
+              <button class="btn-secondary delete-btn" (click)="onDelete.emit(item.id)" title="Delete Item">
                 <span class="material-symbols-outlined">delete</span>
                 <span>Delete</span>
               </button>
@@ -116,203 +134,204 @@ import confetti from 'canvas-confetti';
   `,
   styles: [`
     .invoice-card {
-      background: var(--bg-surface-elevated);
-      border: 2px dashed var(--border-highlight);
-      border-radius: var(--radius-xl);
-      padding: 1.5rem;
-      box-shadow: var(--shadow-lg);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-gold);
+      border-radius: var(--radius-md);
+      padding: 1.35rem;
+      box-shadow: var(--shadow-md);
       position: relative;
-      overflow: hidden;
+      transition: border-color 0.15s ease;
 
       &.is-silver {
-        border-color: rgba(148, 163, 184, 0.4);
+        border-color: var(--border-silver);
       }
     }
 
-    .receipt-header {
-      text-align: center;
-      padding-bottom: 1rem;
-      border-bottom: 1px dashed var(--border-subtle);
-      margin-bottom: 1.25rem;
+    .memo-header {
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 1rem;
 
-      .header-badge {
-        display: inline-flex;
+      .memo-badge-row {
+        display: flex;
+        justify-content: space-between;
         align-items: center;
-        gap: 0.35rem;
-        background: rgba(212, 175, 55, 0.12);
-        color: var(--text-gold);
-        font-size: 0.72rem;
-        font-weight: 800;
-        letter-spacing: 0.08em;
-        padding: 4px 12px;
-        border-radius: var(--radius-full);
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.35rem;
 
-        span {
-          font-size: 16px;
+        .memo-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.3rem;
+          font-size: 0.68rem;
+          font-weight: 800;
+          color: var(--text-gold);
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+
+          span.material-symbols-outlined {
+            font-size: 16px;
+          }
+        }
+
+        .memo-hsn {
+          font-size: 0.68rem;
+          font-weight: 700;
+          color: var(--text-muted);
+          background: var(--bg-surface-elevated);
+          padding: 2px 6px;
+          border-radius: var(--radius-xs);
+          border: 1px solid var(--border-subtle);
         }
       }
 
       .product-title {
-        font-size: 1.35rem;
+        font-size: 1.25rem;
         font-weight: 800;
         color: var(--text-primary);
-        margin: 0.25rem 0;
+        margin: 0.2rem 0;
       }
 
-      .receipt-meta {
+      .memo-meta {
         display: flex;
         align-items: center;
-        justify-content: center;
         gap: 0.4rem;
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         color: var(--text-muted);
+
+        .memo-ref {
+          font-family: monospace;
+          font-weight: 600;
+        }
       }
     }
 
-    .receipt-body {
+    .memo-body {
       display: flex;
       flex-direction: column;
       gap: 0.25rem;
     }
 
-    .invoice-row {
+    .memo-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.4rem 0;
-      font-size: 0.92rem;
+      padding: 0.45rem 0;
+      font-size: 0.88rem;
       color: var(--text-secondary);
 
-      .label {
+      .row-label {
         font-weight: 500;
-        small {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+
+        .row-hint {
+          font-size: 0.75rem;
           color: var(--text-muted);
-          margin-left: 4px;
         }
       }
 
-      .value {
+      .row-val {
         font-weight: 700;
-        font-family: var(--font-heading);
         color: var(--text-primary);
-        font-size: 1rem;
+        font-family: var(--font-heading);
       }
 
-      &.highlight {
+      .weight-text {
+        color: var(--text-gold);
+      }
+
+      &.highlight-sub {
         border-top: 1px solid var(--border-subtle);
-        margin-top: 0.35rem;
-        padding-top: 0.65rem;
+        margin-top: 0.25rem;
+        padding-top: 0.55rem;
         color: var(--text-primary);
         font-weight: 600;
       }
 
-      &.total-row {
-        background: rgba(212, 175, 55, 0.08);
-        border: 2px solid var(--border-highlight);
-        border-radius: var(--radius-md);
-        padding: 1rem;
-        margin: 1rem 0;
-
-        .total-label-wrap {
+      &.gst-row {
+        .gst-label-wrap {
           display: flex;
           flex-direction: column;
 
-          .label {
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: var(--text-gold);
-            letter-spacing: 0.04em;
-          }
-
-          .inclusive-text {
-            font-size: 0.7rem;
+          .gst-split {
+            font-size: 0.68rem;
             color: var(--text-muted);
           }
         }
 
-        .total-val {
-          font-size: 1.6rem;
-          font-weight: 900;
-          color: var(--text-gold);
+        .zero-gst {
+          color: var(--color-success);
         }
       }
     }
 
-    .receipt-actions {
+    .total-payable-block {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-gold);
+      border-radius: var(--radius-sm);
+      padding: 0.9rem 1rem;
       display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-      margin-top: 1.25rem;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0.85rem 0 0.25rem;
 
-      .btn-save {
-        background: var(--gold-gradient);
-        color: #1A1200;
-        font-weight: 700;
-        width: 100%;
-        padding: 0.85rem;
-        border-radius: var(--radius-md);
-        border: none;
+      .payable-label-col {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        cursor: pointer;
-        box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
-        font-family: var(--font-heading);
-        font-size: 1rem;
-        transition: all 0.2s ease;
+        flex-direction: column;
 
-        &:hover:not(:disabled) {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+        .payable-title {
+          font-size: 0.85rem;
+          font-weight: 800;
+          letter-spacing: 0.05em;
+          color: var(--text-gold);
+          font-family: var(--font-heading);
         }
 
-        &:disabled {
-          background: rgba(34, 197, 94, 0.2);
-          color: var(--color-live);
-          border: 1px solid rgba(34, 197, 94, 0.4);
-          box-shadow: none;
-          cursor: default;
+        .payable-sub {
+          font-size: 0.68rem;
+          color: var(--text-muted);
         }
       }
 
-      .action-grid {
-        display: flex;
-        gap: 0.5rem;
+      .payable-amount {
+        font-size: 1.45rem;
+        font-weight: 800;
+        font-family: var(--font-heading);
+        color: var(--text-gold);
+      }
+    }
 
-        .btn-action {
+    .memo-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 1rem;
+
+      .memo-save-btn {
+        min-height: 42px;
+      }
+
+      .action-btn-row {
+        display: flex;
+        gap: 0.4rem;
+
+        .btn-secondary {
           flex: 1;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.35rem;
-          padding: 0.7rem 0.5rem;
-          border-radius: var(--radius-md);
-          background: var(--bg-surface);
-          border: 1px solid var(--border-subtle);
-          color: var(--text-primary);
-          font-size: 0.85rem;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.2s ease;
+          min-height: 38px;
+          padding: 0.5rem 0.6rem;
+          font-size: 0.8rem;
 
           span.material-symbols-outlined {
-            font-size: 18px;
+            font-size: 16px;
           }
 
-          &:hover {
-            background: var(--input-bg);
-            border-color: var(--border-highlight);
-            color: var(--text-gold);
-          }
-
-          &.btn-whatsapp:hover {
-            border-color: #25D366;
+          &.share-btn:hover {
             color: #25D366;
+            border-color: rgba(37, 211, 102, 0.4);
           }
 
-          &.btn-delete {
+          &.delete-btn {
             color: var(--color-danger);
             &:hover {
               background: var(--color-danger-bg);
@@ -335,20 +354,21 @@ export class InvoiceCardComponent {
   readonly isSaved = signal<boolean>(false);
   readonly copySuccess = signal<boolean>(false);
 
+  getHsnCode(item: CalculationResult): string {
+    if (item.metal === 'gold') {
+      return item.productTitle.toLowerCase().includes('bar') || item.productTitle.toLowerCase().includes('coin')
+        ? '7108'
+        : '7113';
+    } else {
+      return item.productTitle.toLowerCase().includes('bar') || item.productTitle.toLowerCase().includes('coin')
+        ? '7106'
+        : '7113';
+    }
+  }
+
   saveItem(item: CalculationResult): void {
     this.historyService.addCalculation(item);
     this.isSaved.set(true);
-
-    try {
-      confetti({
-        particleCount: 50,
-        spread: 60,
-        origin: { y: 0.8 },
-        colors: ['#F3C343', '#D4AF37', '#B8860B', '#F8FAFC']
-      });
-    } catch {
-      // Non-critical visual effect
-    }
   }
 
   shareWhatsApp(item: CalculationResult): void {
@@ -359,7 +379,7 @@ export class InvoiceCardComponent {
     const success = await this.historyService.copyToClipboard(item);
     if (success) {
       this.copySuccess.set(true);
-      setTimeout(() => this.copySuccess.set(false), 2500);
+      setTimeout(() => this.copySuccess.set(false), 2200);
     }
   }
 }

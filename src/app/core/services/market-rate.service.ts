@@ -2,8 +2,7 @@ import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, catchError } from 'rxjs';
 import { StorageService } from './storage.service';
-import { GoldPurity, GoldRates, GoldPurityCardData, SilverBreakdown, MarketRateState, HistoricalRateItem, RateUnit } from '../models/rate.model';
-
+import { GoldRates, GoldPurityCardData, SilverBreakdown, HistoricalRateItem, RateUnit } from '../models/rate.model';
 @Injectable({
   providedIn: 'root'
 })
@@ -36,9 +35,6 @@ export class MarketRateService {
   readonly lastUpdated = signal<string>(
     this.storage.getItem<string>('rate_last_updated', new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }))
   );
-
-  readonly source = computed<'MANUAL' | 'LIVE'>(() => (this.isLive() ? 'LIVE' : 'MANUAL'));
-
   // Computed Purity Breakdowns
   readonly goldPurityList = computed<GoldPurityCardData[]>(() => {
     const rates = this.goldRates();
@@ -88,21 +84,6 @@ export class MarketRateService {
       isUp: true
     };
   });
-
-  /**
-   * Get Gold Rates (API-ready observable / sync getter)
-   */
-  getGoldRates(): Observable<GoldRates> {
-    return of(this.goldRates());
-  }
-
-  /**
-   * Get Silver Rate in Per Kg
-   */
-  getSilverRate(): Observable<number> {
-    return of(this.silverRatePerKg());
-  }
-
   /**
    * Update manual Gold Rates
    */

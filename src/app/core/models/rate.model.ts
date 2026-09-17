@@ -27,15 +27,6 @@ export interface SilverBreakdown {
   isUp?: boolean;
 }
 
-export interface MarketRateState {
-  isLive: boolean;
-  lastUpdated: string;
-  goldRates: GoldRates; // in per gram
-  silverRatePerKg: number; // in per kg
-  source: 'MANUAL' | 'LIVE';
-  goldTrendPercent?: number;
-  silverTrendPercent?: number;
-}
 
 export interface HistoricalRateItem {
   year: number;

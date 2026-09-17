@@ -1,9 +1,9 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MarketRateService } from '../../core/services/market-rate.service';
-import { GoldPurity, RateUnit, GoldRates } from '../../core/models/rate.model';
+import { RateUnit } from '../../core/models/rate.model';
 import { InrCurrencyPipe } from '../../shared/pipes/inr-currency.pipe';
 import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badge.component';
 
@@ -13,7 +13,6 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule,
     RouterModule,
     InrCurrencyPipe,
     RateBadgeComponent
@@ -73,15 +72,15 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
         <!-- Derived rates summary pill banner -->
         <div class="derived-banner">
           <div class="derived-item">
-            <span class="k-tag">24K Pure</span>
+            <span class="k-tag">24K Pure (999)</span>
             <span class="k-val">{{ marketService.goldRates()['24K'] | inrCurrency }} / g</span>
           </div>
           <div class="derived-item">
-            <span class="k-tag">22K Standard</span>
+            <span class="k-tag">22K Standard (916)</span>
             <span class="k-val">{{ marketService.goldRates()['22K'] | inrCurrency }} / g</span>
           </div>
           <div class="derived-item">
-            <span class="k-tag">18K Hallmark</span>
+            <span class="k-tag">18K Hallmark (750)</span>
             <span class="k-val">{{ marketService.goldRates()['18K'] | inrCurrency }} / g</span>
           </div>
         </div>
@@ -94,7 +93,7 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
             <span class="material-symbols-outlined table-icon">table_chart</span>
             <h3>Standard Weight Denominations</h3>
           </div>
-          <span class="table-hint">Indian Jewellery Market Units</span>
+          <span class="table-hint">Indian Bullion & Jewellery Market Standard Units</span>
         </div>
 
         <div class="table-responsive">
@@ -105,6 +104,7 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
                 <th>24K (Pure 999)</th>
                 <th>22K (Hallmark 916)</th>
                 <th>18K (750 Gold)</th>
+                <th>Quick Calc</th>
               </tr>
             </thead>
             <tbody>
@@ -117,6 +117,11 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
                   <td class="rate-cell">{{ (marketService.goldRates()['24K'] * row.grams) | inrCurrency }}</td>
                   <td class="rate-cell highlight-cell">{{ (marketService.goldRates()['22K'] * row.grams) | inrCurrency }}</td>
                   <td class="rate-cell">{{ (marketService.goldRates()['18K'] * row.grams) | inrCurrency }}</td>
+                  <td>
+                    <a [routerLink]="['/calculator']" [queryParams]="{ metal: 'gold', purity: '22K', weight: row.grams }" class="table-calc-link" title="Calculate 22K jewellery price">
+                      <span class="material-symbols-outlined">calculate</span>
+                    </a>
+                  </td>
                 </tr>
               }
             </tbody>
@@ -132,9 +137,9 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
             <h4>99.9% Fine Gold (999)</h4>
           </div>
           <p>
-            The purest form of gold with zero alloy mixture. Primarily used for investment bullion, gold bars, minted coins, and Ayurvedic preparations. Too soft for regular jewellery wear.
+            The purest benchmark form of gold without alloy addition. Used for investment gold bars, minted coins, and central bullion reserves.
           </p>
-          <div class="formula-chip">Formula: Base Rate ₹{{ marketService.goldRates()['24K'] | inrCurrency:false }}/g</div>
+          <div class="formula-chip">Benchmark: ₹{{ marketService.goldRates()['24K'] | inrCurrency:false }}/g</div>
         </div>
 
         <div class="app-card guide-box">
@@ -143,9 +148,9 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
             <h4>91.6% Hallmark (916)</h4>
           </div>
           <p>
-            The traditional standard for Indian bridal and everyday jewellery. Mixed with 8.4% copper, silver, or zinc for supreme durability and lustrous shine. BIS Hallmark certified.
+            The standard for Indian bridal, temple, and everyday jewellery. Alloyed with copper or silver for structural durability. Certified by BIS Hallmarking.
           </p>
-          <div class="formula-chip">Formula: 24K Rate × (22 / 24) = 91.67%</div>
+          <div class="formula-chip">Formula: 24K × (22 / 24) = 91.67%</div>
         </div>
 
         <div class="app-card guide-box">
@@ -154,9 +159,9 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
             <h4>75.0% Hallmark (750)</h4>
           </div>
           <p>
-            Contains 75% pure gold mixed with 25% other metals. Ideal for stone-studded, diamond and solitaire modern jewellery providing superior grip for delicate gem settings.
+            Contains 75% pure gold mixed with 25% alloys. Preferred for diamond and gemstone jewellery requiring high tensile strength and prong setting durability.
           </p>
-          <div class="formula-chip">Formula: 24K Rate × (18 / 24) = 75.0%</div>
+          <div class="formula-chip">Formula: 24K × (18 / 24) = 75.00%</div>
         </div>
       </div>
 
@@ -173,7 +178,7 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
     .gold-rate-page {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 1.25rem;
     }
 
     .page-header-row {
@@ -184,13 +189,13 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
       flex-wrap: wrap;
 
       .page-title {
-        font-size: 1.4rem;
+        font-size: 1.35rem;
         font-weight: 800;
         color: var(--text-primary);
       }
 
       .page-subtitle {
-        font-size: 0.85rem;
+        font-size: 0.82rem;
         color: var(--text-secondary);
         margin-top: 2px;
       }
@@ -203,26 +208,27 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
         align-items: center;
         flex-wrap: wrap;
         gap: 0.5rem;
-        margin-bottom: 1.25rem;
+        margin-bottom: 1rem;
 
         .header-left {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.45rem;
           color: var(--text-gold);
 
           h4 {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             color: var(--text-primary);
           }
         }
 
         .auto-calc-note {
-          font-size: 0.72rem;
+          font-size: 0.7rem;
           color: var(--text-muted);
-          background: rgba(255, 255, 255, 0.05);
-          padding: 3px 8px;
-          border-radius: var(--radius-sm);
+          background: var(--bg-surface-elevated);
+          padding: 2px 7px;
+          border-radius: var(--radius-xs);
+          border: 1px solid var(--border-subtle);
         }
       }
     }
@@ -230,7 +236,7 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
     .adjuster-form-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 1rem;
+      gap: 0.85rem;
 
       @media (min-width: 640px) {
         grid-template-columns: 1.2fr 1fr;
@@ -244,16 +250,16 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
 
       .symbol {
         position: absolute;
-        left: 1rem;
+        left: 0.85rem;
         font-weight: 700;
         color: var(--text-gold);
-        font-size: 1.1rem;
+        font-size: 1rem;
       }
 
       input {
-        padding-left: 2.2rem;
+        padding-left: 2rem;
         font-weight: 700;
-        font-size: 1.1rem;
+        font-size: 1.05rem;
         color: var(--text-primary);
         font-family: var(--font-heading);
       }
@@ -262,16 +268,32 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
     .derived-banner {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 0.75rem;
-      margin-top: 1rem;
-      padding-top: 1rem;
+      gap: 0.65rem;
+      margin-top: 0.85rem;
+      padding-top: 0.85rem;
       border-top: 1px solid var(--border-subtle);
 
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+        gap: 0.4rem;
+
+        .derived-item {
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.65rem 0.85rem;
+
+          .k-val {
+            margin-top: 0;
+          }
+        }
+      }
+
       .derived-item {
-        background: var(--input-bg);
+        background: var(--bg-surface-elevated);
         border: 1px solid var(--border-subtle);
-        border-radius: var(--radius-md);
-        padding: 0.6rem 0.85rem;
+        border-radius: var(--radius-sm);
+        padding: 0.55rem 0.75rem;
         display: flex;
         flex-direction: column;
 
@@ -300,25 +322,31 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 1rem;
+        margin-bottom: 0.85rem;
+
+        @media (max-width: 768px) {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.35rem;
+        }
 
         .title-wrap {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.45rem;
 
           .table-icon {
             color: var(--text-gold);
           }
 
           h3 {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             color: var(--text-primary);
           }
         }
 
         .table-hint {
-          font-size: 0.72rem;
+          font-size: 0.7rem;
           color: var(--text-muted);
         }
       }
@@ -326,27 +354,30 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
 
     .table-responsive {
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      width: 100%;
     }
 
     .rate-table {
       width: 100%;
+      min-width: 520px;
       border-collapse: collapse;
       text-align: left;
 
       th {
-        padding: 0.75rem 0.85rem;
-        font-size: 0.75rem;
+        padding: 0.65rem 0.8rem;
+        font-size: 0.72rem;
         font-weight: 700;
         color: var(--text-muted);
         text-transform: uppercase;
         border-bottom: 1px solid var(--border-subtle);
-        background: rgba(255, 255, 255, 0.02);
+        background: var(--bg-surface-elevated);
       }
 
       td {
-        padding: 0.85rem;
+        padding: 0.75rem 0.8rem;
         border-bottom: 1px solid var(--border-subtle);
-        font-size: 0.9rem;
+        font-size: 0.88rem;
       }
 
       .unit-cell {
@@ -358,7 +389,7 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
           color: var(--text-primary);
         }
         .unit-grams {
-          font-size: 0.72rem;
+          font-size: 0.7rem;
           color: var(--text-muted);
         }
       }
@@ -374,12 +405,30 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
         }
       }
 
-      tr.highlight-row {
-        background: rgba(212, 175, 55, 0.06);
+      .table-calc-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border-radius: var(--radius-xs);
+        background: var(--bg-surface-elevated);
+        border: 1px solid var(--border-subtle);
+        color: var(--text-gold);
+        transition: all 0.15s ease;
 
-        td {
-          border-color: rgba(212, 175, 55, 0.2);
+        span {
+          font-size: 16px;
         }
+
+        &:hover {
+          background: var(--gold-accent);
+          color: #0E121B;
+        }
+      }
+
+      tr.highlight-row {
+        background: rgba(229, 184, 66, 0.04);
       }
     }
 
@@ -387,7 +436,7 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
     .purity-guide-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 1rem;
+      gap: 0.85rem;
 
       @media (min-width: 768px) {
         grid-template-columns: repeat(3, 1fr);
@@ -396,32 +445,32 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
       .guide-box {
         display: flex;
         flex-direction: column;
-        gap: 0.75rem;
+        gap: 0.65rem;
 
         .guide-header {
           display: flex;
           flex-direction: column;
-          gap: 0.35rem;
+          gap: 0.25rem;
 
           h4 {
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: var(--text-primary);
           }
         }
 
         p {
-          font-size: 0.82rem;
+          font-size: 0.8rem;
           color: var(--text-secondary);
           line-height: 1.45;
           flex: 1;
         }
 
         .formula-chip {
-          background: var(--input-bg);
+          background: var(--bg-surface-elevated);
           border: 1px solid var(--border-subtle);
-          border-radius: var(--radius-sm);
-          padding: 0.4rem 0.6rem;
-          font-size: 0.72rem;
+          border-radius: var(--radius-xs);
+          padding: 0.35rem 0.55rem;
+          font-size: 0.7rem;
           font-weight: 600;
           color: var(--text-gold);
           font-family: monospace;
@@ -430,7 +479,7 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
     }
 
     .cta-row {
-      margin-top: 0.5rem;
+      margin-top: 0.25rem;
     }
   `]
 })
@@ -463,14 +512,16 @@ export class GoldRateComponent {
   });
 
   readonly weightRows = signal([
-    { name: '1 Gram (Base)', grams: 1, isKey: false },
+    { name: '1 Gram (Base Unit)', grams: 1, isKey: false },
     { name: '4 Grams (Half Pavan)', grams: 4, isKey: false },
     { name: '8 Grams (1 Pavan / Sovereign)', grams: 8, isKey: true },
-    { name: '10 Grams (1 Tola / Benchmark)', grams: 10, isKey: true },
+    { name: '10 Grams (1 Tola Benchmark)', grams: 10, isKey: true },
+    { name: '11.664 Grams (Traditional Tola)', grams: 11.664, isKey: false },
     { name: '20 Grams (2 Tolas)', grams: 20, isKey: false },
-    { name: '50 Grams', grams: 50, isKey: false },
+    { name: '31.1035 Grams (1 Troy Ounce)', grams: 31.1035, isKey: false },
+    { name: '50 Grams (5 Tolas)', grams: 50, isKey: false },
     { name: '100 Grams (10 Tolas)', grams: 100, isKey: true },
-    { name: '500 Grams (Half Kg)', grams: 500, isKey: false },
+    { name: '500 Grams (Half Kilogram)', grams: 500, isKey: false },
     { name: '1000 Grams (1 Kilogram)', grams: 1000, isKey: true }
   ]);
 

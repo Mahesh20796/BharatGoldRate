@@ -14,10 +14,10 @@ import { RateBadgeComponent } from '../rate-badge/rate-badge.component';
     <aside class="app-sidebar">
       <div class="sidebar-header">
         <div class="brand-badge">
-          <span class="material-symbols-outlined gold-icon">diamond</span>
+          <span class="material-symbols-outlined gold-icon">toll</span>
         </div>
         <div class="brand-info">
-          <h2>Bharat Gold</h2>
+          <h2>Bharat Bullion</h2>
           <span>Market & Calculator</span>
         </div>
       </div>
@@ -32,12 +32,12 @@ import { RateBadgeComponent } from '../rate-badge/rate-badge.component';
 
         <a routerLink="/gold-rate" routerLinkActive="active" class="nav-link">
           <span class="material-symbols-outlined link-icon gold-accent">toll</span>
-          <span>Gold Rate (24K / 22K / 18K)</span>
+          <span>Gold Rates (24K / 22K / 18K)</span>
         </a>
 
         <a routerLink="/silver-rate" routerLinkActive="active" class="nav-link">
           <span class="material-symbols-outlined link-icon silver-accent">monetization_on</span>
-          <span>Silver Rate (Kg / Gram)</span>
+          <span>Silver Rates (Kg / Gram)</span>
         </a>
 
         <div class="nav-section-title">TOOLS & CALCULATORS</div>
@@ -49,12 +49,12 @@ import { RateBadgeComponent } from '../rate-badge/rate-badge.component';
 
         <a routerLink="/charts" routerLinkActive="active" class="nav-link">
           <span class="material-symbols-outlined link-icon">insights</span>
-          <span>10-Year Historical Analysis</span>
+          <span>10-Year Historical Trends</span>
         </a>
 
         <a routerLink="/history" routerLinkActive="active" class="nav-link">
           <span class="material-symbols-outlined link-icon">receipt_long</span>
-          <span>Calculation Invoices</span>
+          <span>Calculation History</span>
           @if (historyService.historyList().length > 0) {
             <span class="nav-badge">{{ historyService.historyList().length }}</span>
           }
@@ -106,7 +106,7 @@ import { RateBadgeComponent } from '../rate-badge/rate-badge.component';
       border-right: 1px solid var(--border-subtle);
       display: flex;
       flex-direction: column;
-      padding: 1.25rem 1rem;
+      padding: 1.25rem 0.85rem;
       overflow-y: auto;
 
       @media (max-width: 767px) {
@@ -117,36 +117,36 @@ import { RateBadgeComponent } from '../rate-badge/rate-badge.component';
     .sidebar-header {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      padding-bottom: 1.25rem;
-      margin-bottom: 1rem;
+      gap: 0.65rem;
+      padding-bottom: 1rem;
+      margin-bottom: 0.75rem;
       border-bottom: 1px solid var(--border-subtle);
 
       .brand-badge {
-        width: 44px;
-        height: 44px;
-        border-radius: var(--radius-md);
-        background: var(--gold-gradient);
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-xs);
+        background: var(--bg-surface-elevated);
+        border: 1px solid var(--border-gold);
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #1A1200;
-        box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
+        color: var(--text-gold);
 
         .gold-icon {
-          font-size: 26px;
+          font-size: 22px;
         }
       }
 
       .brand-info {
         h2 {
-          font-size: 1.1rem;
+          font-size: 1rem;
           font-weight: 800;
           color: var(--text-primary);
-          line-height: 1.1;
+          line-height: 1.15;
         }
         span {
-          font-size: 0.75rem;
+          font-size: 0.7rem;
           color: var(--text-gold);
           font-weight: 600;
         }
@@ -156,42 +156,42 @@ import { RateBadgeComponent } from '../rate-badge/rate-badge.component';
     .sidebar-nav {
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
+      gap: 0.2rem;
       flex: 1;
 
       .nav-section-title {
         font-size: 0.65rem;
-        font-weight: 800;
+        font-weight: 700;
         letter-spacing: 0.08em;
         color: var(--text-muted);
-        padding: 0.75rem 0.75rem 0.35rem;
+        padding: 0.65rem 0.75rem 0.25rem;
         margin-top: 0.25rem;
       }
 
       .nav-link {
         display: flex;
         align-items: center;
-        gap: 0.75rem;
-        padding: 0.65rem 0.85rem;
-        border-radius: var(--radius-md);
+        gap: 0.65rem;
+        padding: 0.55rem 0.75rem;
+        border-radius: var(--radius-xs);
         color: var(--text-secondary);
         font-weight: 600;
-        font-size: 0.88rem;
-        transition: all 0.2s ease;
+        font-size: 0.84rem;
+        transition: all 0.15s ease;
         position: relative;
 
         .link-icon {
-          font-size: 20px;
+          font-size: 18px;
           color: var(--text-muted);
-          transition: color 0.2s ease;
+          transition: color 0.15s ease;
         }
 
         .gold-accent {
-          color: var(--gold-500);
+          color: var(--text-gold);
         }
 
         .silver-accent {
-          color: var(--silver-400);
+          color: var(--silver-300);
         }
 
         &:hover {
@@ -199,12 +199,12 @@ import { RateBadgeComponent } from '../rate-badge/rate-badge.component';
           color: var(--text-primary);
 
           .link-icon {
-            color: var(--text-gold);
+            color: var(--text-primary);
           }
         }
 
         &.active {
-          background: rgba(212, 175, 55, 0.12);
+          background: var(--bg-surface-elevated);
           color: var(--text-gold);
           font-weight: 700;
 
@@ -216,21 +216,21 @@ import { RateBadgeComponent } from '../rate-badge/rate-badge.component';
             content: '';
             position: absolute;
             left: 0;
-            top: 20%;
-            bottom: 20%;
-            width: 4px;
-            background: var(--gold-500);
-            border-radius: 0 4px 4px 0;
+            top: 15%;
+            bottom: 15%;
+            width: 3px;
+            background: var(--gold-accent);
+            border-radius: 0 2px 2px 0;
           }
         }
 
         .nav-badge {
           margin-left: auto;
-          background: var(--gold-500);
-          color: #1A1200;
-          font-size: 0.7rem;
+          background: var(--gold-accent);
+          color: #0E121B;
+          font-size: 0.65rem;
           font-weight: 800;
-          padding: 2px 7px;
+          padding: 1px 6px;
           border-radius: var(--radius-full);
         }
       }
@@ -239,18 +239,18 @@ import { RateBadgeComponent } from '../rate-badge/rate-badge.component';
     .sidebar-footer-card {
       background: var(--bg-surface-elevated);
       border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 0.85rem;
-      margin-top: 1rem;
+      border-radius: var(--radius-xs);
+      padding: 0.75rem;
+      margin-top: 0.75rem;
 
       .footer-card-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.4rem;
 
         .unit {
-          font-size: 0.7rem;
+          font-size: 0.68rem;
           color: var(--text-muted);
           font-weight: 600;
         }
@@ -260,8 +260,8 @@ import { RateBadgeComponent } from '../rate-badge/rate-badge.component';
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0.25rem 0;
-        font-size: 0.78rem;
+        padding: 0.2rem 0;
+        font-size: 0.75rem;
 
         .label {
           color: var(--text-secondary);

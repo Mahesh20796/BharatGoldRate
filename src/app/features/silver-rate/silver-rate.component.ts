@@ -1,6 +1,6 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MarketRateService } from '../../core/services/market-rate.service';
 import { RateUnit } from '../../core/models/rate.model';
@@ -13,7 +13,6 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule,
     RouterModule,
     InrCurrencyPipe,
     RateBadgeComponent
@@ -78,7 +77,7 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
             <span class="chip-val">{{ marketService.silverBreakdown().perGram | inrCurrency }}</span>
           </div>
           <div class="metric-chip">
-            <span class="chip-label">10 Gram</span>
+            <span class="chip-label">10 Gram (1 Tola)</span>
             <span class="chip-val">{{ marketService.silverBreakdown().per10g | inrCurrency }}</span>
           </div>
           <div class="metric-chip">
@@ -86,7 +85,7 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
             <span class="chip-val">{{ marketService.silverBreakdown().per100g | inrCurrency }}</span>
           </div>
           <div class="metric-chip primary-chip">
-            <span class="chip-label">1 Kilogram</span>
+            <span class="chip-label">1 Kilogram (Benchmark)</span>
             <span class="chip-val">{{ marketService.silverBreakdown().perKg | inrCurrency }}</span>
           </div>
         </div>
@@ -99,7 +98,7 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
             <span class="material-symbols-outlined table-icon">table_chart</span>
             <h3>Standard Silver Weight Denominations</h3>
           </div>
-          <span class="table-hint">Indian Market Benchmarks</span>
+          <span class="table-hint">Indian Bullion & Utensil Benchmarks</span>
         </div>
 
         <div class="table-responsive">
@@ -123,7 +122,7 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
                     {{ (marketService.silverBreakdown().perGram * row.grams) | inrCurrency }}
                   </td>
                   <td>
-                    <a [routerLink]="['/calculator']" [queryParams]="{ metal: 'silver', weight: row.grams }" class="table-calc-link">
+                    <a [routerLink]="['/calculator']" [queryParams]="{ metal: 'silver', weight: row.grams }" class="table-calc-link" title="Calculate Silver Price">
                       <span class="material-symbols-outlined">calculate</span>
                     </a>
                   </td>
@@ -134,18 +133,28 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
         </div>
       </div>
 
-      <!-- Silver Products & Uses -->
+      <!-- Silver Products & Uses (Clean list, no emojis) -->
       <div class="app-card info-card">
         <div class="info-header">
           <span class="material-symbols-outlined info-icon">category</span>
-          <h3>Popular Silver Products in India</h3>
+          <h3>Standard Silver Articles & Classifications</h3>
         </div>
         <div class="products-grid">
-          <div class="product-tag-item">✨ Silver Jewellery (Anklets / Payal, Chains, Rings, Bangles)</div>
-          <div class="product-tag-item">🪙 Silver Bullion Coins (10g, 50g, 100g Laxmi-Ganesh coins)</div>
-          <div class="product-tag-item">🧱 Silver Cast Bars & Ladis (250g, 500g, 1kg, 5kg)</div>
-          <div class="product-tag-item">🍽️ Pooja Utensils & Silverware (Thali, Diya, Kalash, Glass)</div>
-          <div class="product-tag-item">🛕 Pure Silver Murtis & Divine Idols</div>
+          <div class="product-tag-item">
+            <strong>Silver Jewellery:</strong> Anklets (Payal), Chains, Bracelets, Finger Rings, Bangles
+          </div>
+          <div class="product-tag-item">
+            <strong>Bullion Coins:</strong> 10g, 20g, 50g, 100g Fine 999 Minted Bullion Coins
+          </div>
+          <div class="product-tag-item">
+            <strong>Cast Bars & Ladis:</strong> 250g, 500g, 1kg, 5kg Refinery Cast Bars
+          </div>
+          <div class="product-tag-item">
+            <strong>Pooja Silverware:</strong> Traditional Thali, Diya, Kalash, Panchapatra, Tumblers
+          </div>
+          <div class="product-tag-item">
+            <strong>Divine Articles:</strong> Fine Cast Murtis, Idols & Temple Dedication Silver
+          </div>
         </div>
       </div>
 
@@ -162,7 +171,7 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
     .silver-rate-page {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 1.25rem;
     }
 
     .page-header-row {
@@ -173,13 +182,13 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
       flex-wrap: wrap;
 
       .page-title {
-        font-size: 1.4rem;
+        font-size: 1.35rem;
         font-weight: 800;
         color: var(--text-primary);
       }
 
       .page-subtitle {
-        font-size: 0.85rem;
+        font-size: 0.82rem;
         color: var(--text-secondary);
         margin-top: 2px;
       }
@@ -192,26 +201,27 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
         align-items: center;
         flex-wrap: wrap;
         gap: 0.5rem;
-        margin-bottom: 1.25rem;
+        margin-bottom: 1rem;
 
         .header-left {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.45rem;
           color: var(--text-silver);
 
           h4 {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             color: var(--text-primary);
           }
         }
 
         .auto-calc-note {
-          font-size: 0.72rem;
+          font-size: 0.7rem;
           color: var(--text-muted);
-          background: rgba(255, 255, 255, 0.05);
-          padding: 3px 8px;
-          border-radius: var(--radius-sm);
+          background: var(--bg-surface-elevated);
+          padding: 2px 7px;
+          border-radius: var(--radius-xs);
+          border: 1px solid var(--border-subtle);
         }
       }
     }
@@ -219,10 +229,23 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
     .adjuster-form-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 1rem;
+      gap: 0.85rem;
 
       @media (min-width: 640px) {
         grid-template-columns: 1.2fr 1fr;
+      }
+
+      @media (max-width: 768px) {
+        .pill-selector {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 3px;
+
+          .pill-btn {
+            font-size: 0.74rem;
+            padding: 0.5rem 0.35rem;
+          }
+        }
       }
     }
 
@@ -233,16 +256,16 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
 
       .symbol {
         position: absolute;
-        left: 1rem;
+        left: 0.85rem;
         font-weight: 700;
         color: var(--text-secondary);
-        font-size: 1.1rem;
+        font-size: 1rem;
       }
 
       input {
-        padding-left: 2.2rem;
+        padding-left: 2rem;
         font-weight: 700;
-        font-size: 1.1rem;
+        font-size: 1.05rem;
         color: var(--text-primary);
         font-family: var(--font-heading);
       }
@@ -251,16 +274,25 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
     .silver-metrics-bar {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 0.75rem;
-      margin-top: 1rem;
-      padding-top: 1rem;
+      gap: 0.65rem;
+      margin-top: 0.85rem;
+      padding-top: 0.85rem;
       border-top: 1px solid var(--border-subtle);
 
+      @media (max-width: 768px) {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.45rem;
+
+        .metric-chip.primary-chip {
+          grid-column: 1 / -1;
+        }
+      }
+
       .metric-chip {
-        background: var(--input-bg);
+        background: var(--bg-surface-elevated);
         border: 1px solid var(--border-subtle);
-        border-radius: var(--radius-md);
-        padding: 0.6rem 0.85rem;
+        border-radius: var(--radius-sm);
+        padding: 0.55rem 0.75rem;
         display: flex;
         flex-direction: column;
 
@@ -280,8 +312,7 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
         }
 
         &.primary-chip {
-          border-color: rgba(148, 163, 184, 0.4);
-          background: rgba(148, 163, 184, 0.1);
+          border-color: var(--border-silver);
           .chip-val {
             color: var(--text-primary);
           }
@@ -297,25 +328,31 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 1rem;
+        margin-bottom: 0.85rem;
+
+        @media (max-width: 768px) {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.35rem;
+        }
 
         .title-wrap {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.45rem;
 
           .table-icon {
-            color: var(--silver-300);
+            color: var(--text-silver);
           }
 
           h3 {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             color: var(--text-primary);
           }
         }
 
         .table-hint {
-          font-size: 0.72rem;
+          font-size: 0.7rem;
           color: var(--text-muted);
         }
       }
@@ -323,27 +360,30 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
 
     .table-responsive {
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      width: 100%;
     }
 
     .rate-table {
       width: 100%;
+      min-width: 480px;
       border-collapse: collapse;
       text-align: left;
 
       th {
-        padding: 0.75rem 0.85rem;
-        font-size: 0.75rem;
+        padding: 0.65rem 0.8rem;
+        font-size: 0.72rem;
         font-weight: 700;
         color: var(--text-muted);
         text-transform: uppercase;
         border-bottom: 1px solid var(--border-subtle);
-        background: rgba(255, 255, 255, 0.02);
+        background: var(--bg-surface-elevated);
       }
 
       td {
-        padding: 0.85rem;
+        padding: 0.75rem 0.8rem;
         border-bottom: 1px solid var(--border-subtle);
-        font-size: 0.9rem;
+        font-size: 0.88rem;
       }
 
       .unit-name {
@@ -362,7 +402,7 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
         color: var(--text-secondary);
 
         &.highlight-val {
-          color: var(--silver-200);
+          color: var(--text-silver);
           font-weight: 800;
         }
       }
@@ -371,30 +411,26 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 32px;
-        height: 32px;
-        border-radius: var(--radius-sm);
-        background: var(--input-bg);
+        width: 30px;
+        height: 30px;
+        border-radius: var(--radius-xs);
+        background: var(--bg-surface-elevated);
         border: 1px solid var(--border-subtle);
-        color: var(--silver-300);
-        transition: all 0.2s ease;
+        color: var(--text-silver);
+        transition: all 0.15s ease;
 
         span {
-          font-size: 18px;
+          font-size: 16px;
         }
 
         &:hover {
-          background: var(--silver-gradient);
+          background: #CBD5E1;
           color: #0F172A;
         }
       }
 
       tr.highlight-row {
-        background: rgba(148, 163, 184, 0.06);
-
-        td {
-          border-color: rgba(148, 163, 184, 0.2);
-        }
+        background: rgba(148, 163, 184, 0.04);
       }
     }
 
@@ -403,35 +439,42 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
       .info-header {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 1rem;
-        color: var(--silver-300);
+        gap: 0.45rem;
+        margin-bottom: 0.85rem;
+        color: var(--text-silver);
 
         h3 {
-          font-size: 1.1rem;
+          font-size: 1.05rem;
           color: var(--text-primary);
         }
       }
 
       .products-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 0.6rem;
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+
+        @media (min-width: 640px) {
+          grid-template-columns: repeat(2, 1fr);
+        }
 
         .product-tag-item {
-          background: var(--input-bg);
+          background: var(--bg-surface-elevated);
           border: 1px solid var(--border-subtle);
-          border-radius: var(--radius-md);
+          border-radius: var(--radius-xs);
           padding: 0.65rem 0.85rem;
-          font-size: 0.82rem;
+          font-size: 0.8rem;
           color: var(--text-secondary);
-          font-weight: 500;
+
+          strong {
+            color: var(--text-primary);
+          }
         }
       }
     }
 
     .cta-row {
-      margin-top: 0.5rem;
+      margin-top: 0.25rem;
     }
   `]
 })
@@ -467,14 +510,16 @@ export class SilverRateComponent {
   });
 
   readonly silverRows = signal([
-    { name: '1 Gram (Base)', grams: 1, isKey: false },
+    { name: '1 Gram (Base Unit)', grams: 1, isKey: false },
     { name: '10 Grams (1 Tola)', grams: 10, isKey: true },
-    { name: '50 Grams (Silver Bar/Coin)', grams: 50, isKey: false },
-    { name: '100 Grams (10 Tolas / Coin)', grams: 100, isKey: true },
+    { name: '25 Grams', grams: 25, isKey: false },
+    { name: '31.1035 Grams (1 Troy Ounce)', grams: 31.1035, isKey: false },
+    { name: '50 Grams (Bullion Coin)', grams: 50, isKey: false },
+    { name: '100 Grams (10 Tolas Benchmark)', grams: 100, isKey: true },
     { name: '250 Grams (Quarter Kg Bar)', grams: 250, isKey: false },
-    { name: '500 Grams (Half Kg Bar/Thali)', grams: 500, isKey: false },
-    { name: '1000 Grams (1 Kilogram Benchmark)', grams: 1000, isKey: true },
-    { name: '5000 Grams (5 Kilograms Master Bar)', grams: 5000, isKey: false }
+    { name: '500 Grams (Half Kg Bar / Thali)', grams: 500, isKey: false },
+    { name: '1000 Grams (1 Kilogram Master Benchmark)', grams: 1000, isKey: true },
+    { name: '5000 Grams (5 Kilograms Refinery Ingot)', grams: 5000, isKey: false }
   ]);
 
   setUnit(unit: RateUnit): void {

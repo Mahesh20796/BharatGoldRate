@@ -40,7 +40,8 @@ import { InvoiceCardComponent } from '../../shared/components/invoice-card/invoi
             <input
               type="text"
               class="form-control search-input"
-              [(ngModel)]="searchQuery"
+              [ngModel]="searchQuery()"
+              (ngModelChange)="searchQuery.set($event)"
               placeholder="Search by product, purity, date..."
             />
             @if (searchQuery()) {
@@ -116,6 +117,17 @@ import { InvoiceCardComponent } from '../../shared/components/invoice-card/invoi
       align-items: center;
       flex-wrap: wrap;
       gap: 1rem;
+
+      @media (max-width: 640px) {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+
+        .btn-clear-all {
+          width: 100%;
+          justify-content: center;
+        }
+      }
 
       .page-title {
         font-size: 1.4rem;

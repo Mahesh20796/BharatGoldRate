@@ -377,8 +377,8 @@ import { StorageService } from '../../core/services/storage.service';
         }
 
         &.active {
-          border-color: var(--gold-500);
-          box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3);
+          border-color: var(--gold-accent);
+          box-shadow: var(--shadow-sm);
         }
 
         .theme-preview {

@@ -36,26 +36,37 @@ export class HistoryService {
     const formattedCurrency = (num: number) =>
       new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 2 }).format(num);
 
-    const metalTitle = item.metal === 'gold' ? `⚜️ Gold (${item.purity})` : '🥈 Silver';
+    const metalTitle = item.metal === 'gold' ? `Gold (${item.purity})` : 'Fine Silver (999)';
+    const makingDetail = item.labourType === 'none'
+      ? 'Nil (₹0)'
+      : (item.labourType === 'percentage' ? `${item.labourInput}%` : `₹${item.labourInput}/g`);
 
-    let share = `═══════════════════════════\n`;
-    share += `    💎 BHARAT GOLD & SILVER 💎\n`;
-    share += `       ESTIMATE & INVOICE\n`;
-    share += `═══════════════════════════\n\n`;
-    share += `📅 Date: ${item.formattedDate}\n`;
-    share += `👑 Item: ${item.productTitle}\n`;
-    share += `✨ Metal: ${metalTitle}\n`;
-    share += `⚖️ Weight: ${item.weightGrams.toFixed(3)} grams\n`;
-    share += `📈 Base Rate: ${formattedCurrency(item.ratePerGram)} / gram\n\n`;
-    share += `───────────────────────────\n`;
-    share += `💰 Metal Value:    ${formattedCurrency(item.metalValue)}\n`;
-    share += `🔨 Making Charge:  ${formattedCurrency(item.makingCharge)} (${item.labourType === 'percentage' ? item.labourInput + '%' : '₹' + item.labourInput + '/g'})\n`;
-    share += `📑 Taxable Value:  ${formattedCurrency(item.taxableValue)}\n`;
-    share += `🏛️ GST (${item.gstPercentage}%):       ${formattedCurrency(item.gstAmount)}\n`;
-    share += `═══════════════════════════\n`;
-    share += `🎯 FINAL PRICE:    ${formattedCurrency(item.finalPrice)}\n`;
-    share += `═══════════════════════════\n\n`;
-    share += `*Calculated via Bharat Gold & Silver Rate App*`;
+    let gstDetail = `GST (${item.gstPercentage}%): ${formattedCurrency(item.gstAmount)}`;
+    if (item.gstPercentage === 0) {
+      gstDetail = `GST (0% / Exempt): ₹0.00`;
+    } else if (item.gstPercentage === 3.0) {
+      gstDetail = `GST (3.0% - CGST 1.5% + SGST 1.5%): ${formattedCurrency(item.gstAmount)}`;
+    }
+
+    let share = `----------------------------------------\n`;
+    share += `      BHARAT GOLD & SILVER RATES\n`;
+    share += `       PRICE ESTIMATION MEMO\n`;
+    share += `----------------------------------------\n`;
+    share += `Date:          ${item.formattedDate}\n`;
+    share += `Ref No:        #${item.id.substring(item.id.length - 6).toUpperCase()}\n`;
+    share += `Item:          ${item.productTitle}\n`;
+    share += `Metal Purity:  ${metalTitle}\n`;
+    share += `Net Weight:    ${item.weightGrams.toFixed(3)} g\n`;
+    share += `Benchmark:     ${formattedCurrency(item.ratePerGram)} / g\n`;
+    share += `----------------------------------------\n`;
+    share += `Metal Value:   ${formattedCurrency(item.metalValue)}\n`;
+    share += `Making Charge: ${formattedCurrency(item.makingCharge)} (${makingDetail})\n`;
+    share += `Taxable Total: ${formattedCurrency(item.taxableValue)}\n`;
+    share += `${gstDetail}\n`;
+    share += `========================================\n`;
+    share += `NET PAYABLE:   ${formattedCurrency(item.finalPrice)}\n`;
+    share += `========================================\n`;
+    share += `Generated via Bharat Gold & Silver Rates`;
 
     return share;
   }

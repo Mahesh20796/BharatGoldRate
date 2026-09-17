@@ -15,15 +15,15 @@ import { RateBadgeComponent } from '../rate-badge/rate-badge.component';
       <div class="header-container">
         <!-- Brand & Title -->
         <div class="brand-section">
-          <div class="logo-icon">
-            <span class="material-symbols-outlined gold-icon">diamond</span>
+          <div class="logo-mark">
+            <span class="material-symbols-outlined logo-icon">toll</span>
           </div>
           <div class="brand-text">
-            <h1 class="brand-title">Gold & Silver Market</h1>
+            <h1 class="brand-title">Bharat Bullion</h1>
             <div class="brand-meta">
-              <span class="market-tag">Indian Market</span>
+              <span class="market-tag">MCX & IBJA Benchmark</span>
               <span class="dot-separator">•</span>
-              <span class="current-time">{{ formattedDateTime() }}</span>
+              <span class="current-time num-tabular">{{ formattedDateTime() }}</span>
             </div>
           </div>
         </div>
@@ -33,7 +33,7 @@ import { RateBadgeComponent } from '../rate-badge/rate-badge.component';
           <!-- Live / Manual Badge Toggle -->
           <div class="rate-status-wrapper" (click)="toggleRateSource()" title="Click to toggle Manual / Live rate simulation">
             <app-rate-badge [isLive]="marketService.isLive()"></app-rate-badge>
-            <span class="updated-time">Updated: {{ marketService.lastUpdated() }}</span>
+            <span class="updated-time num-tabular">Sync: {{ marketService.lastUpdated() }}</span>
           </div>
 
           <!-- History Action Button -->
@@ -62,15 +62,15 @@ import { RateBadgeComponent } from '../rate-badge/rate-badge.component';
       top: 0;
       z-index: 100;
       background: var(--bg-surface-glass);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border-subtle);
-      padding: 0.75rem 1rem;
-      transition: background-color 0.3s ease;
+      padding: 0.65rem 1rem;
+      transition: background-color 0.2s ease;
     }
 
     .header-container {
-      max-width: 1200px;
+      max-width: 1180px;
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
@@ -81,46 +81,45 @@ import { RateBadgeComponent } from '../rate-badge/rate-badge.component';
     .brand-section {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.65rem;
     }
 
-    .logo-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: var(--radius-md);
-      background: var(--card-gradient-gold);
-      border: 1px solid var(--border-highlight);
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-xs);
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-gold);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
 
-      .gold-icon {
-        color: var(--gold-400);
-        font-size: 26px;
+      .logo-icon {
+        color: var(--text-gold);
+        font-size: 22px;
       }
     }
 
     .brand-title {
-      font-size: 1.15rem;
+      font-size: 1.05rem;
       font-weight: 800;
       letter-spacing: -0.01em;
       color: var(--text-primary);
       margin: 0;
-      line-height: 1.2;
+      line-height: 1.15;
     }
 
     .brand-meta {
       display: flex;
       align-items: center;
-      gap: 0.4rem;
-      font-size: 0.75rem;
+      gap: 0.35rem;
+      font-size: 0.72rem;
       color: var(--text-secondary);
-      margin-top: 2px;
+      margin-top: 1px;
       flex-wrap: wrap;
 
       .market-tag {
-        font-weight: 700;
+        font-weight: 600;
         color: var(--text-gold);
       }
 
@@ -136,7 +135,7 @@ import { RateBadgeComponent } from '../rate-badge/rate-badge.component';
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      gap: 0.5rem;
     }
 
     .rate-status-wrapper {
@@ -145,12 +144,12 @@ import { RateBadgeComponent } from '../rate-badge/rate-badge.component';
       align-items: flex-end;
       gap: 2px;
       cursor: pointer;
-      padding: 4px 8px;
-      border-radius: var(--radius-sm);
-      transition: background 0.2s ease;
+      padding: 3px 6px;
+      border-radius: var(--radius-xs);
+      transition: background 0.15s ease;
 
       &:hover {
-        background: rgba(255, 255, 255, 0.05);
+        background: var(--bg-surface-elevated);
       }
 
       .updated-time {
@@ -161,36 +160,35 @@ import { RateBadgeComponent } from '../rate-badge/rate-badge.component';
     }
 
     .icon-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: var(--radius-md);
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-xs);
       background: var(--bg-surface-elevated);
       border: 1px solid var(--border-subtle);
-      color: var(--text-primary);
+      color: var(--text-secondary);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       position: relative;
-      transition: all 0.2s ease;
+      transition: all 0.15s ease;
 
       &:hover {
-        background: var(--input-bg);
-        border-color: var(--border-highlight);
-        color: var(--text-gold);
-        transform: translateY(-1px);
+        border-color: var(--border-strong);
+        color: var(--text-primary);
       }
 
       .history-count-badge {
         position: absolute;
-        top: -4px;
-        right: -4px;
-        background: var(--gold-500);
-        color: #1A1200;
-        font-size: 0.65rem;
+        top: -3px;
+        right: -3px;
+        background: var(--gold-accent);
+        color: #0E121B;
+        font-size: 0.62rem;
         font-weight: 800;
-        width: 18px;
-        height: 18px;
+        min-width: 16px;
+        height: 16px;
+        padding: 0 4px;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -199,12 +197,16 @@ import { RateBadgeComponent } from '../rate-badge/rate-badge.component';
       }
     }
 
-    @media (max-width: 600px) {
-      .rate-status-wrapper .updated-time {
+    @media (max-width: 768px) {
+      .rate-status-wrapper {
+        display: none;
+      }
+      .brand-meta .dot-separator,
+      .brand-meta .current-time {
         display: none;
       }
       .brand-title {
-        font-size: 1rem;
+        font-size: 0.95rem;
       }
     }
   `]
@@ -240,7 +242,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       weekday: 'short',
       day: 'numeric',
       month: 'short',
-      year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',

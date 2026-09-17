@@ -1,7 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 import { MarketRateService } from '../../core/services/market-rate.service';
 import { InrCurrencyPipe } from '../../shared/pipes/inr-currency.pipe';
 import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badge.component';
@@ -12,60 +11,72 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
   imports: [
     CommonModule,
     RouterModule,
-    FormsModule,
     InrCurrencyPipe,
     RateBadgeComponent
   ],
   template: `
     <div class="page-container dashboard-page">
-      <!-- Market Hero Banner -->
-      <section class="hero-banner">
-        <div class="hero-content">
-          <div class="hero-tag-row">
-            <span class="location-tag">
-              <span class="material-symbols-outlined location-icon">location_on</span>
-              INDIA BULLION MARKET
-            </span>
-            <app-rate-badge [isLive]="marketService.isLive()"></app-rate-badge>
+      <!-- Market Terminal Banner -->
+      <section class="market-hero-card app-card gold-card">
+        <div class="hero-top-row">
+          <div class="terminal-badge">
+            <span class="material-symbols-outlined icon">candlestick_chart</span>
+            <span>INDIA BULLION BENCHMARK</span>
           </div>
-          <h2 class="hero-title">Today's Gold & Silver Rates</h2>
+          <app-rate-badge [isLive]="marketService.isLive()"></app-rate-badge>
+        </div>
+
+        <div class="hero-content">
+          <h2 class="hero-title">Live Gold & Silver Rates</h2>
           <p class="hero-subtitle">
-            Benchmark precious metal rates in Indian Rupees (INR) with real-time conversion and tax calculation.
+            Official benchmark bullion prices in Indian Rupees (INR) for 24K pure, 22K hallmark jewellery, and 999 fine silver.
           </p>
         </div>
 
-        <div class="quick-stats-pills">
-          <div class="stat-pill">
-            <span class="stat-label">24K Gold / 10g</span>
-            <span class="stat-value gold-text">
+        <div class="terminal-stats-grid">
+          <div class="stat-cell">
+            <span class="cell-label">24K Pure Gold / 10g</span>
+            <span class="cell-value gold-text">
               {{ (marketService.goldRates()['24K'] * 10) | inrCurrency }}
             </span>
+            <span class="cell-sub">Base ₹{{ marketService.goldRates()['24K'] | inrCurrency:false }}/g</span>
           </div>
-          <div class="stat-pill">
-            <span class="stat-label">22K Hallmark / 10g</span>
-            <span class="stat-value gold-text">
+
+          <div class="stat-cell">
+            <span class="cell-label">22K Hallmark / 10g</span>
+            <span class="cell-value gold-text">
               {{ (marketService.goldRates()['22K'] * 10) | inrCurrency }}
             </span>
+            <span class="cell-sub">1 Pavan (8g) = {{ (marketService.goldRates()['22K'] * 8) | inrCurrency }}</span>
           </div>
-          <div class="stat-pill">
-            <span class="stat-label">Pure Silver / 1 Kg</span>
-            <span class="stat-value silver-text">
+
+          <div class="stat-cell">
+            <span class="cell-label">Fine Silver / 1 Kg</span>
+            <span class="cell-value silver-text">
               {{ marketService.silverRatePerKg() | inrCurrency }}
             </span>
+            <span class="cell-sub">100g = {{ marketService.silverBreakdown().per100g | inrCurrency }}</span>
+          </div>
+
+          <div class="stat-cell">
+            <span class="cell-label">Gold / Silver Ratio</span>
+            <span class="cell-value ratio-text">
+              {{ (marketService.goldRates()['24K'] / marketService.silverBreakdown().perGram).toFixed(1) }}x
+            </span>
+            <span class="cell-sub">1g Gold = {{ (marketService.goldRates()['24K'] / marketService.silverBreakdown().perGram).toFixed(1) }}g Silver</span>
           </div>
         </div>
       </section>
 
-      <!-- Main Rates Section: Gold & Silver Cards Grid -->
+      <!-- Main Rates Section: Gold & Silver Breakdown -->
       <section class="rates-grid-section">
-        <!-- Section Header -->
         <div class="section-title-row">
           <div class="title-with-icon">
-            <span class="material-symbols-outlined section-icon gold">workspace_premium</span>
-            <h3>Gold Rates (Purity Wise)</h3>
+            <span class="material-symbols-outlined section-icon gold">toll</span>
+            <h3>Gold Rates by Purity</h3>
           </div>
           <a routerLink="/gold-rate" class="view-all-link">
-            <span>Rate Table</span>
+            <span>Denomination Table</span>
             <span class="material-symbols-outlined">arrow_forward</span>
           </a>
         </div>
@@ -73,73 +84,78 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
         <!-- 3 Gold Purity Cards (24K, 22K, 18K) -->
         <div class="gold-cards-grid">
           @for (item of marketService.goldPurityList(); track item.purity) {
-            <div class="app-card gold-card purity-card" [class.primary-purity]="item.purity === '22K'">
-              @if (item.purity === '22K') {
-                <div class="card-corner-badge">MOST POPULAR JEWELLERY</div>
-              }
+            <div class="app-card purity-card" [class.gold-card]="item.purity === '24K' || item.purity === '22K'">
               <div class="card-header-row">
-                <div class="purity-badge-wrap">
-                  <span class="purity-chip">{{ item.purity }}</span>
+                <div class="purity-title-wrap">
+                  <span class="purity-tag" [class.purity-22k]="item.purity === '22K'">{{ item.purity }}</span>
                   <div>
                     <h4 class="purity-name">{{ item.name }}</h4>
                     <span class="fineness-text">{{ item.fineness }}</span>
                   </div>
                 </div>
-                <div class="trend-badge up">
+                <div class="trend-indicator up">
                   <span class="material-symbols-outlined">trending_up</span>
                   <span>+{{ item.changePercent }}%</span>
                 </div>
               </div>
 
-              <!-- Price per Gram Large -->
-              <div class="price-highlight-block">
+              <!-- Primary Price per 1 Gram -->
+              <div class="price-hero-box">
                 <span class="price-label">Price per 1 Gram</span>
                 <div class="main-price">{{ item.perGram | inrCurrency }}</div>
               </div>
 
-              <!-- Breakdown row: 10 Gram & 1 Kg -->
+              <!-- Multi-unit breakdown -->
               <div class="price-sub-grid">
                 <div class="sub-item">
-                  <span class="sub-label">Per 10 Gram (1 Tola)</span>
+                  <span class="sub-label">8g (1 Pavan)</span>
+                  <span class="sub-val">{{ (item.perGram * 8) | inrCurrency }}</span>
+                </div>
+                <div class="sub-item">
+                  <span class="sub-label">10g (1 Tola)</span>
                   <span class="sub-val">{{ item.per10g | inrCurrency }}</span>
                 </div>
                 <div class="sub-item">
-                  <span class="sub-label">Per 1 Kilogram</span>
+                  <span class="sub-label">100g</span>
+                  <span class="sub-val">{{ (item.perGram * 100) | inrCurrency }}</span>
+                </div>
+                <div class="sub-item">
+                  <span class="sub-label">1 Kilogram</span>
                   <span class="sub-val">{{ item.perKg | inrCurrency }}</span>
                 </div>
               </div>
 
-              <!-- Card Action Button -->
+              <!-- Action Link -->
               <a [routerLink]="['/calculator']" [queryParams]="{ metal: 'gold', purity: item.purity }" class="btn-card-calc">
                 <span class="material-symbols-outlined">calculate</span>
-                <span>Calculate {{ item.purity }} Price</span>
+                <span>Estimate {{ item.purity }} Price</span>
               </a>
             </div>
           }
         </div>
 
-        <!-- Silver Rates Card -->
+        <!-- Silver Benchmark Card -->
         <div class="section-title-row silver-header">
           <div class="title-with-icon">
             <span class="material-symbols-outlined section-icon silver">monetization_on</span>
             <h3>Silver Market Rates</h3>
           </div>
           <a routerLink="/silver-rate" class="view-all-link">
-            <span>Rate Table</span>
+            <span>Denomination Table</span>
             <span class="material-symbols-outlined">arrow_forward</span>
           </a>
         </div>
 
         <div class="app-card silver-card silver-overview-card">
           <div class="card-header-row">
-            <div class="purity-badge-wrap">
-              <span class="purity-chip silver-chip">999</span>
+            <div class="purity-title-wrap">
+              <span class="purity-tag silver-tag">999</span>
               <div>
                 <h4 class="purity-name">Fine Silver 99.9% Pure</h4>
-                <span class="fineness-text">Indian Bullion & Jewellers Association Standard</span>
+                <span class="fineness-text">Indian Bullion & Jewellers Standard (IBJA)</span>
               </div>
             </div>
-            <div class="trend-badge up">
+            <div class="trend-indicator up">
               <span class="material-symbols-outlined">trending_up</span>
               <span>+{{ marketService.silverBreakdown().changePercent }}%</span>
             </div>
@@ -151,16 +167,16 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
               <div class="metric-value">{{ marketService.silverBreakdown().perKg | inrCurrency }}</div>
             </div>
             <div class="silver-metric-box">
-              <span class="metric-label">Per 1 Gram</span>
-              <div class="metric-value">{{ marketService.silverBreakdown().perGram | inrCurrency }}</div>
+              <span class="metric-label">Per 100 Gram</span>
+              <div class="metric-value">{{ marketService.silverBreakdown().per100g | inrCurrency }}</div>
             </div>
             <div class="silver-metric-box">
               <span class="metric-label">Per 10 Gram</span>
               <div class="metric-value">{{ marketService.silverBreakdown().per10g | inrCurrency }}</div>
             </div>
             <div class="silver-metric-box">
-              <span class="metric-label">Per 100 Gram</span>
-              <div class="metric-value">{{ marketService.silverBreakdown().per100g | inrCurrency }}</div>
+              <span class="metric-label">Per 1 Gram</span>
+              <div class="metric-value">{{ marketService.silverBreakdown().perGram | inrCurrency }}</div>
             </div>
           </div>
 
@@ -171,52 +187,52 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
         </div>
       </section>
 
-      <!-- Quick Action Shortcuts -->
-      <section class="quick-actions-section">
-        <h3 class="section-heading">Quick Actions & Tools</h3>
-        <div class="action-tiles-grid">
-          <a routerLink="/calculator" class="action-tile">
-            <div class="tile-icon-wrap gold-tile">
+      <!-- Quick Action Utilities -->
+      <section class="quick-tools-section">
+        <h3 class="section-heading">Calculators & Market Tools</h3>
+        <div class="tools-grid">
+          <a routerLink="/calculator" class="tool-tile">
+            <div class="tool-icon gold-icon">
               <span class="material-symbols-outlined">calculate</span>
             </div>
-            <div class="tile-text">
+            <div class="tool-info">
               <h4>Gold Calculator</h4>
               <p>Making charges & GST breakdown</p>
             </div>
-            <span class="material-symbols-outlined arrow">chevron_right</span>
+            <span class="material-symbols-outlined tool-arrow">chevron_right</span>
           </a>
 
-          <a routerLink="/calculator" [queryParams]="{ metal: 'silver' }" class="action-tile">
-            <div class="tile-icon-wrap silver-tile">
+          <a routerLink="/calculator" [queryParams]="{ metal: 'silver' }" class="tool-tile">
+            <div class="tool-icon silver-icon">
               <span class="material-symbols-outlined">shopping_bag</span>
             </div>
-            <div class="tile-text">
+            <div class="tool-info">
               <h4>Silver Calculator</h4>
               <p>Payal, Utensil & Coin estimate</p>
             </div>
-            <span class="material-symbols-outlined arrow">chevron_right</span>
+            <span class="material-symbols-outlined tool-arrow">chevron_right</span>
           </a>
 
-          <a routerLink="/charts" class="action-tile">
-            <div class="tile-icon-wrap chart-tile">
-              <span class="material-symbols-outlined">analytics</span>
+          <a routerLink="/charts" class="tool-tile">
+            <div class="tool-icon chart-icon">
+              <span class="material-symbols-outlined">show_chart</span>
             </div>
-            <div class="tile-text">
+            <div class="tool-info">
               <h4>10-Year Analysis</h4>
               <p>2017 to 2026 historical trends</p>
             </div>
-            <span class="material-symbols-outlined arrow">chevron_right</span>
+            <span class="material-symbols-outlined tool-arrow">chevron_right</span>
           </a>
 
-          <a routerLink="/rate-settings" class="action-tile">
-            <div class="tile-icon-wrap settings-tile">
+          <a routerLink="/rate-settings" class="tool-tile">
+            <div class="tool-icon settings-icon">
               <span class="material-symbols-outlined">price_change</span>
             </div>
-            <div class="tile-text">
+            <div class="tool-info">
               <h4>Update Rates</h4>
-              <p>Manual rate & GST customization</p>
+              <p>Manual rate & labour customizer</p>
             </div>
-            <span class="material-symbols-outlined arrow">chevron_right</span>
+            <span class="material-symbols-outlined tool-arrow">chevron_right</span>
           </a>
         </div>
       </section>
@@ -229,104 +245,111 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
       gap: 1.5rem;
     }
 
-    /* Hero Banner */
-    .hero-banner {
-      background: var(--card-gradient-gold);
-      border: 1px solid var(--border-highlight);
-      border-radius: var(--radius-xl);
-      padding: 1.5rem;
-      box-shadow: var(--gold-glow);
-      position: relative;
-      overflow: hidden;
+    /* Market Hero Card */
+    .market-hero-card {
+      padding: 1.35rem;
 
-      .hero-tag-row {
+      .hero-top-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
         gap: 0.5rem;
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.85rem;
 
-        .location-tag {
+        .terminal-badge {
           display: inline-flex;
           align-items: center;
-          gap: 4px;
-          font-size: 0.72rem;
+          gap: 0.35rem;
+          font-size: 0.7rem;
           font-weight: 800;
-          letter-spacing: 0.08em;
+          letter-spacing: 0.06em;
           color: var(--text-gold);
           text-transform: uppercase;
 
-          .location-icon {
+          .icon {
             font-size: 16px;
           }
         }
       }
 
       .hero-title {
-        font-size: 1.6rem;
+        font-size: 1.5rem;
         font-weight: 800;
         color: var(--text-primary);
-        margin-bottom: 0.4rem;
-        line-height: 1.2;
+        margin-bottom: 0.35rem;
 
         @media (min-width: 768px) {
-          font-size: 2.1rem;
+          font-size: 1.85rem;
         }
       }
 
       .hero-subtitle {
-        font-size: 0.88rem;
+        font-size: 0.85rem;
         color: var(--text-secondary);
-        max-width: 650px;
+        max-width: 680px;
         line-height: 1.45;
         margin-bottom: 1.25rem;
       }
     }
 
-    .quick-stats-pills {
+    .terminal-stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 0.75rem;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 0.65rem;
 
-      .stat-pill {
-        background: var(--bg-surface-glass);
-        backdrop-filter: blur(10px);
+      @media (max-width: 767px) {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+
+        .stat-cell {
+          padding: 0.65rem 0.75rem;
+
+          .cell-value {
+            font-size: 1.02rem;
+          }
+        }
+      }
+
+      .stat-cell {
+        background: var(--bg-surface-elevated);
         border: 1px solid var(--border-subtle);
-        border-radius: var(--radius-md);
-        padding: 0.75rem 1rem;
+        border-radius: var(--radius-sm);
+        padding: 0.75rem 0.95rem;
         display: flex;
         flex-direction: column;
         gap: 2px;
 
-        .stat-label {
-          font-size: 0.72rem;
+        .cell-label {
+          font-size: 0.7rem;
           font-weight: 600;
           color: var(--text-muted);
           text-transform: uppercase;
         }
 
-        .stat-value {
+        .cell-value {
           font-size: 1.15rem;
           font-weight: 800;
           font-family: var(--font-heading);
 
-          &.gold-text {
-            color: var(--text-gold);
-          }
-          &.silver-text {
-            color: var(--silver-300);
-          }
+          &.gold-text { color: var(--text-gold); }
+          &.silver-text { color: var(--text-silver); }
+          &.ratio-text { color: #38BDF8; }
+        }
+
+        .cell-sub {
+          font-size: 0.68rem;
+          color: var(--text-muted);
         }
       }
     }
 
-    /* Section Titles */
+    /* Section Header */
     .section-title-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1rem;
+      margin-bottom: 0.85rem;
       margin-top: 0.5rem;
 
       &.silver-header {
@@ -336,17 +359,16 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
       .title-with-icon {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.45rem;
 
         .section-icon {
-          font-size: 24px;
-          &.gold { color: var(--gold-400); }
+          font-size: 22px;
+          &.gold { color: var(--text-gold); }
           &.silver { color: var(--silver-300); }
         }
 
         h3 {
-          font-size: 1.2rem;
-          font-weight: 800;
+          font-size: 1.15rem;
           color: var(--text-primary);
         }
       }
@@ -355,13 +377,13 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
         display: inline-flex;
         align-items: center;
         gap: 2px;
-        font-size: 0.82rem;
+        font-size: 0.8rem;
         font-weight: 700;
         color: var(--text-gold);
-        transition: transform 0.2s ease;
+        transition: transform 0.15s ease;
 
         span.material-symbols-outlined {
-          font-size: 16px;
+          font-size: 15px;
         }
 
         &:hover {
@@ -376,11 +398,11 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
       grid-template-columns: 1fr;
       gap: 1rem;
 
-      @media (min-width: 640px) {
+      @media (min-width: 768px) {
         grid-template-columns: repeat(2, 1fr);
       }
 
-      @media (min-width: 1024px) {
+      @media (min-width: 1080px) {
         grid-template-columns: repeat(3, 1fr);
       }
     }
@@ -388,26 +410,7 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
     .purity-card {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
-      position: relative;
-
-      &.primary-purity {
-        border-color: var(--gold-400);
-        box-shadow: 0 8px 32px rgba(212, 175, 55, 0.35);
-      }
-
-      .card-corner-badge {
-        position: absolute;
-        top: 0;
-        right: 0;
-        background: var(--gold-gradient);
-        color: #1A1200;
-        font-size: 0.62rem;
-        font-weight: 800;
-        letter-spacing: 0.05em;
-        padding: 4px 10px;
-        border-bottom-left-radius: var(--radius-md);
-      }
+      gap: 0.85rem;
     }
 
     .card-header-row {
@@ -416,52 +419,55 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
       align-items: flex-start;
     }
 
-    .purity-badge-wrap {
+    .purity-title-wrap {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.65rem;
 
-      .purity-chip {
-        background: var(--gold-gradient);
-        color: #1A1200;
-        font-weight: 900;
-        font-size: 1rem;
-        padding: 6px 10px;
-        border-radius: var(--radius-sm);
-        box-shadow: 0 2px 8px rgba(212, 175, 55, 0.4);
+      .purity-tag {
+        background: var(--bg-surface-elevated);
+        border: 1px solid var(--border-gold);
+        color: var(--text-gold);
+        font-weight: 800;
+        font-size: 0.95rem;
+        padding: 4px 8px;
+        border-radius: var(--radius-xs);
 
-        &.silver-chip {
-          background: var(--silver-gradient);
-          color: #0F172A;
-          box-shadow: 0 2px 8px rgba(148, 163, 184, 0.4);
+        &.purity-22k {
+          background: rgba(229, 184, 66, 0.15);
+        }
+
+        &.silver-tag {
+          border-color: var(--border-silver);
+          color: var(--text-silver);
         }
       }
 
       .purity-name {
-        font-size: 0.95rem;
+        font-size: 0.92rem;
         font-weight: 700;
         color: var(--text-primary);
         line-height: 1.2;
       }
 
       .fineness-text {
-        font-size: 0.72rem;
+        font-size: 0.7rem;
         color: var(--text-muted);
       }
     }
 
-    .trend-badge {
+    .trend-indicator {
       display: inline-flex;
       align-items: center;
       gap: 2px;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 700;
-      padding: 3px 8px;
-      border-radius: var(--radius-full);
+      padding: 2px 6px;
+      border-radius: var(--radius-xs);
 
       &.up {
         background: var(--color-success-bg);
-        color: var(--color-success);
+        color: var(--color-live);
       }
 
       span.material-symbols-outlined {
@@ -469,21 +475,21 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
       }
     }
 
-    .price-highlight-block {
-      background: var(--input-bg);
+    .price-hero-box {
+      background: var(--bg-surface-elevated);
       border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 0.85rem 1rem;
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 0.95rem;
 
       .price-label {
-        font-size: 0.72rem;
+        font-size: 0.7rem;
         color: var(--text-muted);
         text-transform: uppercase;
         font-weight: 600;
       }
 
       .main-price {
-        font-size: 1.65rem;
+        font-size: 1.55rem;
         font-weight: 800;
         font-family: var(--font-heading);
         color: var(--text-gold);
@@ -495,13 +501,13 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
     .price-sub-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.5rem;
+      gap: 0.4rem;
 
       .sub-item {
-        background: rgba(255, 255, 255, 0.03);
+        background: var(--bg-surface-elevated);
         border: 1px solid var(--border-subtle);
-        border-radius: var(--radius-sm);
-        padding: 0.6rem;
+        border-radius: var(--radius-xs);
+        padding: 0.5rem 0.65rem;
         display: flex;
         flex-direction: column;
 
@@ -511,11 +517,11 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
         }
 
         .sub-val {
-          font-size: 0.88rem;
+          font-size: 0.85rem;
           font-weight: 700;
           font-family: var(--font-heading);
           color: var(--text-primary);
-          margin-top: 2px;
+          margin-top: 1px;
         }
       }
     }
@@ -524,72 +530,75 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.4rem;
+      gap: 0.35rem;
       background: var(--bg-surface-elevated);
       color: var(--text-gold);
-      border: 1px solid var(--border-highlight);
-      padding: 0.75rem;
-      border-radius: var(--radius-md);
+      border: 1px solid var(--border-gold);
+      padding: 0.65rem;
+      border-radius: var(--radius-sm);
       font-weight: 700;
-      font-size: 0.85rem;
-      transition: all 0.2s ease;
+      font-size: 0.82rem;
+      transition: all 0.15s ease;
       cursor: pointer;
 
       span.material-symbols-outlined {
-        font-size: 18px;
+        font-size: 16px;
       }
 
       &:hover {
-        background: var(--gold-gradient);
-        color: #1A1200;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 14px rgba(212, 175, 55, 0.3);
+        background: var(--gold-accent);
+        color: #0E121B;
       }
 
       &.silver-calc-btn {
         color: var(--text-silver);
-        border-color: rgba(148, 163, 184, 0.3);
-        margin-top: 1rem;
+        border-color: var(--border-silver);
+        margin-top: 0.85rem;
 
         &:hover {
-          background: var(--silver-gradient);
+          background: #CBD5E1;
           color: #0F172A;
-          box-shadow: 0 4px 14px rgba(148, 163, 184, 0.3);
         }
       }
     }
 
     /* Silver Overview Card */
     .silver-overview-card {
-      padding: 1.5rem;
+      padding: 1.35rem;
 
       .silver-metrics-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 0.75rem;
-        margin-top: 1rem;
+        gap: 0.65rem;
+        margin-top: 0.85rem;
 
-        @media (min-width: 640px) {
-          grid-template-columns: 2fr 1fr 1fr 1fr;
+        @media (max-width: 767px) {
+          .silver-metric-box.primary {
+            grid-column: 1 / -1;
+          }
+        }
+
+        @media (min-width: 768px) {
+          grid-template-columns: 1.5fr 1fr 1fr 1fr;
         }
 
         .silver-metric-box {
-          background: var(--input-bg);
+          background: var(--bg-surface-elevated);
           border: 1px solid var(--border-subtle);
-          border-radius: var(--radius-md);
-          padding: 0.85rem;
+          border-radius: var(--radius-sm);
+          padding: 0.75rem;
           display: flex;
           flex-direction: column;
 
           .metric-label {
-            font-size: 0.72rem;
+            font-size: 0.68rem;
             color: var(--text-muted);
             text-transform: uppercase;
             font-weight: 600;
           }
 
           .metric-value {
-            font-size: 1.15rem;
+            font-size: 1.05rem;
             font-weight: 800;
             font-family: var(--font-heading);
             color: var(--text-silver);
@@ -597,11 +606,9 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
           }
 
           &.primary {
-            border-color: rgba(148, 163, 184, 0.4);
-            background: linear-gradient(145deg, rgba(148, 163, 184, 0.15), rgba(17, 22, 34, 0.6));
-
+            border-color: var(--border-silver);
             .metric-value {
-              font-size: 1.45rem;
+              font-size: 1.35rem;
               color: var(--text-primary);
             }
           }
@@ -609,21 +616,21 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
       }
     }
 
-    /* Quick Action Tiles */
-    .quick-actions-section {
-      margin-top: 1rem;
+    /* Quick Tools */
+    .quick-tools-section {
+      margin-top: 0.75rem;
 
       .section-heading {
-        font-size: 1.2rem;
+        font-size: 1.15rem;
         font-weight: 800;
         color: var(--text-primary);
-        margin-bottom: 1rem;
+        margin-bottom: 0.85rem;
       }
 
-      .action-tiles-grid {
+      .tools-grid {
         display: grid;
         grid-template-columns: 1fr;
-        gap: 0.85rem;
+        gap: 0.75rem;
 
         @media (min-width: 640px) {
           grid-template-columns: repeat(2, 1fr);
@@ -633,76 +640,74 @@ import { RateBadgeComponent } from '../../shared/components/rate-badge/rate-badg
         }
       }
 
-      .action-tile {
-        background: var(--bg-surface-elevated);
+      .tool-tile {
+        background: var(--bg-surface);
         border: 1px solid var(--border-subtle);
-        border-radius: var(--radius-lg);
-        padding: 1.1rem;
+        border-radius: var(--radius-sm);
+        padding: 0.95rem;
         display: flex;
         align-items: center;
-        gap: 0.85rem;
-        transition: all 0.2s ease;
+        gap: 0.75rem;
+        transition: all 0.15s ease;
         text-decoration: none;
 
-        .tile-icon-wrap {
-          width: 44px;
-          height: 44px;
-          border-radius: var(--radius-md);
+        .tool-icon {
+          width: 38px;
+          height: 38px;
+          border-radius: var(--radius-xs);
           display: flex;
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
 
           span {
-            font-size: 24px;
+            font-size: 20px;
           }
 
-          &.gold-tile {
-            background: rgba(212, 175, 55, 0.15);
-            color: var(--gold-400);
+          &.gold-icon {
+            background: rgba(229, 184, 66, 0.12);
+            color: var(--text-gold);
           }
-          &.silver-tile {
-            background: rgba(148, 163, 184, 0.15);
+          &.silver-icon {
+            background: rgba(148, 163, 184, 0.12);
             color: var(--silver-300);
           }
-          &.chart-tile {
-            background: rgba(59, 130, 246, 0.15);
-            color: #60A5FA;
+          &.chart-icon {
+            background: rgba(56, 189, 248, 0.12);
+            color: #38BDF8;
           }
-          &.settings-tile {
-            background: rgba(168, 85, 247, 0.15);
+          &.settings-icon {
+            background: rgba(168, 85, 247, 0.12);
             color: #C084FC;
           }
         }
 
-        .tile-text {
+        .tool-info {
           flex: 1;
 
           h4 {
-            font-size: 0.95rem;
+            font-size: 0.88rem;
             font-weight: 700;
             color: var(--text-primary);
           }
           p {
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             color: var(--text-muted);
             margin-top: 1px;
           }
         }
 
-        .arrow {
+        .tool-arrow {
           color: var(--text-muted);
-          font-size: 20px;
-          transition: transform 0.2s ease;
+          font-size: 18px;
+          transition: transform 0.15s ease;
         }
 
         &:hover {
-          background: var(--input-bg);
-          border-color: var(--border-highlight);
-          transform: translateY(-2px);
-          box-shadow: var(--shadow-md);
+          border-color: var(--border-strong);
+          background: var(--bg-surface-elevated);
 
-          .arrow {
+          .tool-arrow {
             color: var(--text-gold);
             transform: translateX(3px);
           }
