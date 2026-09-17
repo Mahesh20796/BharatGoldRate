@@ -38,7 +38,7 @@ import { InvoiceCardComponent } from '../../shared/components/invoice-card/invoi
                 <span class="subtitle">BIS Standard Jewellery & Bullion Estimator</span>
               </div>
             </div>
-            <button class="btn-reset" (click)="resetForm()" title="Reset Calculator">
+            <button type="button" class="btn-reset" (click)="resetForm($event)" title="Reset Calculator">
               <span class="material-symbols-outlined">restart_alt</span>
               <span>Reset</span>
             </button>
@@ -138,6 +138,7 @@ import { InvoiceCardComponent } from '../../shared/components/invoice-card/invoi
                       class="form-control weight-input"
                       formControlName="weightGrams"
                       placeholder="e.g. 0.500, 8.000, 16.700"
+                      (input)="onInputChange()"
                     />
                     <span class="suffix">Grams</span>
                   </div>
@@ -174,6 +175,7 @@ import { InvoiceCardComponent } from '../../shared/components/invoice-card/invoi
                       min="1"
                       class="form-control"
                       formControlName="ratePerGram"
+                      (input)="onInputChange()"
                     />
                     <span class="suffix-text">/ gram</span>
                   </div>
@@ -181,12 +183,12 @@ import { InvoiceCardComponent } from '../../shared/components/invoice-card/invoi
               </div>
             </div>
 
-            <!-- Step 5: Labour / Making Charges -->
+            <!-- Step 5: Making / Labour Charges -->
             <div class="form-step">
               <div class="step-num">5</div>
               <div class="step-body">
-                <div class="labour-header">
-                  <label class="step-label">Labour / Making Charge</label>
+                <div class="making-charge-header">
+                  <label class="step-label">Making / Labour Charges</label>
                   <div class="mini-pills">
                     <button
                       type="button"
@@ -232,6 +234,7 @@ import { InvoiceCardComponent } from '../../shared/components/invoice-card/invoi
                         min="0"
                         class="form-control"
                         formControlName="labourValue"
+                        (input)="onInputChange()"
                       />
                     </div>
                   </div>
@@ -806,6 +809,14 @@ export class GoldCalculatorComponent implements OnInit {
     }
   }
 
+  onInputChange(): void {
+    if (this.calcForm.valid) {
+      this.calculate();
+    } else {
+      this.currentResult.set(null);
+    }
+  }
+
   calculate(): void {
     this.submitted.set(true);
     if (this.calcForm.invalid) {
@@ -832,22 +843,32 @@ export class GoldCalculatorComponent implements OnInit {
     this.currentResult.set(result);
   }
 
-  resetForm(): void {
+  resetForm(event?: Event): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
     const labourDefaults = this.settingsService.labourSettings();
     const gstDefaults = this.settingsService.gstSettings();
     const currentRates = this.marketService.goldRates();
 
+    this.submitted.set(false);
+    this.productCategory.set('jewellery');
+    this.currentResult.set(null);
+
     this.calcForm.reset({
       purity: '22K',
       productType: 'Chain',
-      weightGrams: 0.500,
+      weightGrams: null,
       ratePerGram: currentRates['22K'],
       labourType: labourDefaults.goldLabourType,
       labourValue: labourDefaults.goldLabourPercent,
       gstType: 'percentage',
       gstValue: gstDefaults.goldGst
     });
-    this.productCategory.set('jewellery');
-    this.calculate();
+
+    this.calcForm.markAsPristine();
+    this.calcForm.markAsUntouched();
   }
 }

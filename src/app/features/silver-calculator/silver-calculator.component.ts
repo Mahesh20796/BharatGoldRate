@@ -36,7 +36,7 @@ import { InvoiceCardComponent } from '../../shared/components/invoice-card/invoi
                 <span class="subtitle">Anklets, Utensils, Coins & Bars Calculation</span>
               </div>
             </div>
-            <button class="btn-reset" (click)="resetForm()" title="Reset Calculator">
+            <button type="button" class="btn-reset" (click)="resetForm($event)" title="Reset Calculator">
               <span class="material-symbols-outlined">restart_alt</span>
               <span>Reset</span>
             </button>
@@ -75,6 +75,7 @@ import { InvoiceCardComponent } from '../../shared/components/invoice-card/invoi
                       class="form-control weight-input"
                       formControlName="weightGrams"
                       placeholder="e.g. 16.700, 50.000, 250.000"
+                      (input)="onInputChange()"
                     />
                     <span class="suffix">Grams</span>
                   </div>
@@ -111,6 +112,7 @@ import { InvoiceCardComponent } from '../../shared/components/invoice-card/invoi
                       min="0.01"
                       class="form-control"
                       formControlName="ratePerGram"
+                      (input)="onInputChange()"
                     />
                     <span class="suffix-text">/ gram</span>
                   </div>
@@ -169,6 +171,7 @@ import { InvoiceCardComponent } from '../../shared/components/invoice-card/invoi
                         min="0"
                         class="form-control"
                         formControlName="labourValue"
+                        (input)="onInputChange()"
                       />
                     </div>
                   </div>
@@ -702,6 +705,14 @@ export class SilverCalculatorComponent implements OnInit {
     }
   }
 
+  onInputChange(): void {
+    if (this.calcForm.valid) {
+      this.calculate();
+    } else {
+      this.currentResult.set(null);
+    }
+  }
+
   calculate(): void {
     this.submitted.set(true);
     if (this.calcForm.invalid) {
@@ -726,19 +737,29 @@ export class SilverCalculatorComponent implements OnInit {
     this.currentResult.set(result);
   }
 
-  resetForm(): void {
+  resetForm(event?: Event): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
     const gstDefaults = this.settingsService.gstSettings();
     const perGramRate = this.marketService.silverBreakdown().perGram;
 
+    this.submitted.set(false);
+    this.currentResult.set(null);
+
     this.calcForm.reset({
       productType: 'Silver Anklet (Payal)',
-      weightGrams: 16.700,
+      weightGrams: null,
       ratePerGram: perGramRate,
       labourType: 'none',
       labourValue: 0,
       gstType: 'percentage',
       gstValue: gstDefaults.silverGst
     });
-    this.calculate();
+
+    this.calcForm.markAsPristine();
+    this.calcForm.markAsUntouched();
   }
 }
